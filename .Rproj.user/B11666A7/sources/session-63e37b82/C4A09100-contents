@@ -1,0 +1,2 @@
+data <- read.table("amazon0601.txt")
+data
