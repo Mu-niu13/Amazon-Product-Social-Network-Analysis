@@ -1,30 +1,22 @@
-# Loading Library
-library("igraph")
-library("rsample")
+# Loadaing Library
+library(readr)
+library(igraph)
+library(rsample)
 
-#default margins
-def_marg <- c(5.1, 4.1, 4.1, 2.1)
-
-#no margins
-no_marg <- c(0, 0, 0, 0)
-
-# Loading Data
+# Reading Data
 data <- read.table("amazon0601.txt")
 
-# Setting column Names
+# Re-name
 colnames(data) <- c("From", "To")
 
-# Splitting for sample
+# Splitting data
 data_split <- initial_split(data, prop = 0.05)
-
 data_split_training <- training(data_split)
 
-# Convert into igraph
+# Convertting into igraph
 data_ig <- graph_from_data_frame(data_split_training, directed = FALSE)
 
-plot(data_ig)
-
-# Basic elements
+# Basic Elements
 vertices <- V(data_ig)
 edges <- E(data_ig)
 weights <- E(data_ig)$weight
@@ -36,4 +28,6 @@ path_lengths <- distances(data_ig)
 diameter <- diameter(data_ig)
 components <- components(data_ig)
 
-
+# When plotting, there are too many nodes, we should consider filttering
+# 1. Setting threshold
+# 2. Setting layout
