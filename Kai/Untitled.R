@@ -1,4 +1,4 @@
-# Loadaing Library
+# Loading Library
 library(readr)
 library(igraph)
 library(rsample)
@@ -10,24 +10,45 @@ data <- read.table("amazon0601.txt")
 colnames(data) <- c("From", "To")
 
 # Splitting data
-data_split <- initial_split(data, prop = 0.05)
+data_split <- initial_split(data, prop = 0.003)
 data_split_training <- training(data_split)
 
 # Convertting into igraph
-data_ig <- graph_from_data_frame(data_split_training, directed = FALSE)
+data_ig_original <- graph_from_data_frame(data, directed = FALSE)
+data_ig_splitted <- graph_from_data_frame(data_split_training, directed = FALSE)
 
 # Basic Elements
-vertices <- V(data_ig)
-edges <- E(data_ig)
-weights <- E(data_ig)$weight
-degree <- degree(data_ig)
-in_degree <- degree(data_ig, mode = "in")
-out_degree <- degree(data_ig, mode = "out")
-clustering_coef <- transitivity(data_ig, type = "local")
-path_lengths <- distances(data_ig)
-diameter <- diameter(data_ig)
-components <- components(data_ig)
+# Represents individuals in the data set
+vertices <- V(data_ig_splitted)
 
+# Relationship between the individuals
+edges <- E(data_ig_splitted)
+
+# Strength of the interaction; here, the return is Null - no weights
+weights <- E(data_ig_splitted)$weight 
+
+# Number of edges connected to each vertex
+degree <- degree(data_ig_splitted)
+
+# The data is undirected, hence in_degree = out_degree
+in_degree <- degree(data_ig_splitted, mode = "in")
+out_degree <- degree(data_ig_splitted, mode = "out")
+
+# Degree to which modes tend to cluster together
+clustering_coef <- transitivity(data_ig_splitted, type = "local") # Many NaN
+
+# The lengths of the shortest paths between each pair of vertext
+path_lengths <- distances(data_ig_splitted)
+
+# Longest shortest path in the network
+diameter <- diameter(data_ig_splitted)
+
+# Subsets of the network where any two vertices are connected by a path
+components <- components(data_ig_splitted)
+
+
+
+  
 # When plotting, there are too many nodes, we should consider filttering
 # 1. Setting threshold
 # 2. Setting layout
