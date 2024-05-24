@@ -3,6 +3,7 @@ library(readr)
 library(igraph)
 library(rsample)
 
+## 1. Load and Prepare the Data
 # Reading Data
 data <- read.table("amazon0601.txt")
 
@@ -46,7 +47,23 @@ diameter <- diameter(data_ig_splitted)
 # Subsets of the network where any two vertices are connected by a path
 components <- components(data_ig_splitted)
 
+# 2. Generate Induced Subgraphs
+set.seed(194)
+sub.network1 <- induced.subgraph(data_ig_original, sample(V(data_ig_original), 200))
 
+
+# 4. Analyze Network Metrics
+hist(degree(sub.network1, mode = "in"),
+     breaks=1:vcount(sub.network1)-1, 
+     main="Indegree histogram")
+
+hist(degree(sub.network1, mode = "out"),
+     breaks=1:vcount(sub.network1)-1, 
+     main="Outdegree histogram")
+
+plot(sub.network1, vertex.size=10,
+     vertex.label.cex = 0.4,
+     edge.arrow.size = 0.1)
 
   
 # When plotting, there are too many nodes, we should consider filttering
