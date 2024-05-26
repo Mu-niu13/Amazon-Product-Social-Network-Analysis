@@ -1,0 +1,120 @@
+
+
+
+```{r, message=FALSE, warning=FALSE}
+# Loading Library
+library(readr)
+library(igraph)
+library(rsample)
+library(dplyr)
+library(stringr)
+```
+
+
+
+```{r}
+# Reading Data
+data <- read.table("../data/amazon0601.txt")
+# Re-name
+colnames(data) <- c("From", "To")
+data.igraph <- graph_from_data_frame(data, directed = TRUE)
+```
+
+
+```{r}
+data.igraph
+```
+
+
+```{r}
+# read data
+meta <- readLines('../data/amazon-meta.txt')
+meta <- data.frame(meta)
+```
+
+
+```{r}
+# Filter rows that contain 'Id', 'title', 'group', 'categories'
+filtered_meta <- meta %>% filter(grepl('Id: |title:|group:|categories:', meta))
+
+# get row index for product that has missing info
+n <- length(filtered_meta$meta)
+has_id <- grepl("Id: ", filtered_meta$meta)
+
+no_id_ahead <- logical(n)  # Initialize with FALSE
+for (i in 1:n) {
+  if (i + 4 <= n) {
+    no_id_ahead[i] <- !grepl("Id:", filtered_meta[i + 4, ])
+    }
+  else {
+    no_id_ahead[i] <- TRUE  # Automatically TRUE if no such row exists
+  }
+}
+
+non_valid_indices <- which(has_id & no_id_ahead)
+non_valid_indices <- non_valid_indices[-c(5852)]
+# drop row by index
+filtered_meta <- filtered_meta[-c(non_valid_indices), ]
+filtered_meta  <- data.frame(filtered_meta)
+```
+
+
+```{r}
+# map to df
+result <- data.frame(Id = character(),
+                     Title = character(),
+                     Group = character(),
+                     Categories = character(),
+                     stringsAsFactors = FALSE)
+
+# Process the data
+i <- 1
+while (i <= nrow(filtered_meta)) {
+  current_row <- filtered_meta$filtered_meta[i]
+  if (grepl("Id:  ", current_row)) {
+    # Check if there are at least three more rows and they match the expected titles
+    if (i + 3 <= nrow(filtered_meta) &&
+        grepl("  title: ", filtered_meta$filtered_meta[i + 1]) &&
+        grepl("  group: ", filtered_meta$filtered_meta[i + 2]) &&
+        grepl("  categories: ", filtered_meta$filtered_meta[i + 3])) {
+      
+      # Extract and clean the data
+      id <- sub("Id:  ", "", filtered_meta$filtered_meta[i])
+      title <- sub("  title: ", "", filtered_meta$filtered_meta[i + 1])
+      group <- sub("  group: ", "", filtered_meta$filtered_meta[i + 2])
+      categories <- sub("  categories: ", "", filtered_meta$filtered_meta[i + 3])
+      
+      # Append to result dataframe
+      result <- rbind(result, data.frame(Id = as.integer(id),
+                                         Title = title,
+                                         Group = group,
+                                         Categories = as.integer(categories),
+                                         stringsAsFactors = FALSE))
+      # Move index forward by 4
+      i <- i + 4
+    }
+    else {
+      # Skip the current Id and all following rows until next Id or end of data
+      i <- i + 1
+      while(i <= nrow(filtered_meta) && !grepl("Id:  ", filtered_meta$filtered_meta[i])) {
+        i <- i + 1
+      }
+    }
+  }
+}
+
+# write to csv
+result %>% write.csv('../data/meta_data.csv')
+```
+
+```{r}
+miss_id = c()
+for (i in 1:nrow(filtered_meta)) {
+  if (grepl("^Id:", data[i, 1])) {
+      current_id <- sub("^Id: ", "", data[i, 1])
+      if (!(grepl("^Id:", data[i+4, 1])))
+           miss_id = c(miss_id, current_id)}}
+
+miss_id
+```
+
