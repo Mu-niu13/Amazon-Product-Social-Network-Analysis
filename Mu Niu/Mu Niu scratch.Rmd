@@ -13,20 +13,6 @@ library(stringr)
 
 
 ```{r}
-# Reading Data
-data <- read.table("../data/amazon0601.txt")
-# Re-name
-colnames(data) <- c("From", "To")
-data.igraph <- graph_from_data_frame(data, directed = TRUE)
-```
-
-
-```{r}
-data.igraph
-```
-
-
-```{r}
 # read data
 meta <- readLines('../data/amazon-meta.txt')
 meta <- data.frame(meta)
@@ -105,16 +91,5 @@ while (i <= nrow(filtered_meta)) {
 
 # write to csv
 result %>% write.csv('../data/meta_data.csv')
-```
-
-```{r}
-miss_id = c()
-for (i in 1:nrow(filtered_meta)) {
-  if (grepl("^Id:", data[i, 1])) {
-      current_id <- sub("^Id: ", "", data[i, 1])
-      if (!(grepl("^Id:", data[i+4, 1])))
-           miss_id = c(miss_id, current_id)}}
-
-miss_id
 ```
 
