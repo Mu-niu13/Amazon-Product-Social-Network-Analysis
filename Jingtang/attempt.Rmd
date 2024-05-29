@@ -1,0 +1,226 @@
+
+
+```{r}
+# Loading Library
+library(readr)
+library(igraph)
+library(rsample)
+```
+
+
+```{r}
+## 1. Load and Prepare the Data
+# Reading Data
+data <- read.table("/Users/jingtangsun/Documents/GitHub/Amazon-Product-Social-Network-Analysis/data/amazon0601.txt")
+
+# Re-name
+colnames(data) <- c("From", "To")
+
+# Splitting data
+data_split <- initial_split(data, prop = 0.003)
+data_split_training <- training(data_split)
+
+# Convertting into igraph
+data_ig_original <- graph_from_data_frame(data, directed = TRUE)
+data_ig_splitted <- graph_from_data_frame(data_split_training, directed = TRUE)
+
+# Basic Elements
+# Represents individuals in the data set
+vertices <- V(data_ig_splitted)
+
+# Relationship between the individuals
+edges <- E(data_ig_splitted)
+
+# Strength of the interaction; here, the return is Null - no weights
+weights <- E(data_ig_splitted)$weight 
+
+# Number of edges connected to each vertex
+degree <- degree(data_ig_splitted)
+
+# The data is undirected, hence in_degree = out_degree
+in_degree <- degree(data_ig_splitted, mode = "in")
+out_degree <- degree(data_ig_splitted, mode = "out")
+
+# Degree to which modes tend to cluster together
+clustering_coef <- transitivity(data_ig_splitted, type = "local") # Many NaN
+
+# The lengths of the shortest paths between each pair of vertext
+path_lengths <- distances(data_ig_splitted)
+
+# Longest shortest path in the network
+diameter <- diameter(data_ig_splitted)
+
+# Subsets of the network where any two vertices are connected by a path
+components <- components(data_ig_splitted)
+```
+
+```{r}
+# 2. Generate Induced Subgraphs
+set.seed(194)
+
+# Initialize a list to store the subgraphs
+sub.networks <- list()
+
+# Loop to create 50 random samples
+for (i in 1:50) {
+  # Sample 50 nodes from the first 2000 nodes (IDs 0-1999)
+  sample_nodes <- sample(0:1999, 50)
+  
+  # Create a subgraph with the sampled nodes
+  sub.network <- induced.subgraph(data_ig_original, sample_nodes)
+  
+  # Store the subgraph in the list
+  sub.networks[[i]] <- sub.network
+}
+
+# Example to access the first subgraph
+# plot(sub.networks[[1]])
+
+```
+
+```{r}
+for (i in 1:50) {
+plot(sub.networks[[i]], vertex.size=10,
+     vertex.label.cex = 0.4,
+     edge.arrow.size = 0.1)
+}
+```
+
+```{r}
+library(igraph)
+
+# Initialize a list to store the filtered subgraphs
+filtered_sub.networks <- list()
+
+# Loop to process each subgraph in the list
+for (i in 1:length(sub.networks)) {
+  # Get the current subgraph
+  sub.network <- sub.networks[[i]]
+  
+  # Find the nodes with edges between them
+  edges <- E(sub.network)
+  nodes_with_edges <- unique(c(head_of(sub.network, edges), tail_of(sub.network, edges)))
+  
+  # Create a new subgraph with the nodes that have edges
+  filtered_sub.network <- induced_subgraph(sub.network, nodes_with_edges)
+  
+  # Store the filtered subgraph in the list
+  filtered_sub.networks[[i]] <- filtered_sub.network
+}
+
+# Combine all filtered subgraphs into a single graph
+combined_network <- do.call(union, filtered_sub.networks)
+
+# Plot the combined network
+plot(combined_network, vertex.size=5, vertex.label.cex=0.7, edge.arrow.size=0.5)
+
+```
+
+```{r}
+plot(combined_network, 
+     vertex.size = 5.5, 
+     vertex.label.cex = 0.5, 
+     vertex.label.dist = 0, 
+     vertex.label.degree = 0,
+     edge.arrow.size = 0.2, 
+     edge.color = "gray", 
+     vertex.color = "orange", 
+     layout = layout_with_fr, 
+     margin = 0.2)
+```
+
+
+# 4. Analyze Network Metrics
+hist(degree(sub.network1, mode = "in"),
+     breaks=1:vcount(sub.network1)-1, 
+     main="Indegree histogram")
+
+hist(degree(sub.network1, mode = "out"),
+     breaks=1:vcount(sub.network1)-1, 
+     main="Outdegree histogram")
+
+```{r}
+head(data_ig_original)
+```
+
+```{r}
+# Assuming your dataframe is named data
+subset_data <- data[data$"From" == 1 | data$"To" == 1, ]
+
+# View the subsetted dataframe
+print(subset_data)
+subset_data
+subset_data <- graph_from_data_frame(subset_data, directed = TRUE)
+
+plot(subset_data, 
+     vertex.size = 5.5, 
+     vertex.label.cex = 0.5, 
+     vertex.label.dist = 0, 
+     vertex.label.degree = 0,
+     edge.arrow.size = 0.2, 
+     edge.color = "gray", 
+     vertex.color = "orange", 
+     layout = layout_with_fr, 
+     margin = 0.2)
+
+```
+
+
+```{r}
+library(igraph)
+
+# Load your graph data (assuming it's already loaded as data_ig_original)
+# Here we assume data_ig_original is a graph object created from the edge list
+
+# Nodes to filter
+nodes_to_filter <- c(2,3,4,8)
+
+# Extract edges involving these nodes
+filtered_edges <- E(data_ig_original)[from(nodes_to_filter) | to(nodes_to_filter)]
+
+# Get the subgraph with these edges
+sub_network <- subgraph.edges(data_ig_original, filtered_edges)
+
+# Plot the subgraph
+plot(sub_network, 
+     vertex.size = 5, 
+     vertex.label.cex = 0.7, 
+     vertex.label.dist = 0, 
+     vertex.label.degree = 0, 
+     edge.arrow.size = 0.5, 
+     edge.color = "gray", 
+     vertex.color = "orange", 
+     layout = layout_with_fr, 
+     margin = 0.2)
+
+```
+```{r}
+head(data, 50)
+```
+
+  
+```{r}
+library(dplyr)
+left_join(data,meta_data, by = c("From","Id"))
+```
+  
+```{r}
+# Create a directed graph from the data frame
+g <- graph_from_data_frame(data, directed = TRUE)
+
+# Compute degrees
+degree_all <- degree(g, mode = "all")
+in_degree <- degree(g, mode = "in")
+out_degree <- degree(g, mode = "out")
+
+# Display the results
+degree_all
+in_degree
+out_degree
+
+```
+  
+  
+# When plotting, there are too many nodes, we should consider filttering
+# 1. Setting threshold
+# 2. Setting layout
