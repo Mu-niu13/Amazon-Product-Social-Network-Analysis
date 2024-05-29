@@ -5,18 +5,23 @@ library(rsample)
 
 ## 1. Load and Prepare the Data
 # Reading Data
+setwd("/Users/kai/Documents/GitHub/Amazon-Product-Social-Network-Analysis/Data")
 data <- read.table("amazon0601.txt")
+code_book <- read.csv("meta_data.csv")
+
 
 # Re-name
 colnames(data) <- c("From", "To")
+
+
 
 # Splitting data
 data_split <- initial_split(data, prop = 0.003)
 data_split_training <- training(data_split)
 
 # Convertting into igraph
-data_ig_original <- graph_from_data_frame(data, directed = FALSE)
-data_ig_splitted <- graph_from_data_frame(data_split_training, directed = FALSE)
+data_ig_original <- graph_from_data_frame(data, directed = TRUE)
+data_ig_splitted <- graph_from_data_frame(data_split_training, directed = TRUE)
 
 # Basic Elements
 # Represents individuals in the data set
@@ -47,9 +52,10 @@ diameter <- diameter(data_ig_splitted)
 # Subsets of the network where any two vertices are connected by a path
 components <- components(data_ig_splitted)
 
-# 2. Generate Induced Subgraphs
-set.seed(194)
-sub.network1 <- induced.subgraph(data_ig_original, sample(V(data_ig_original), 200))
+# Betweenness
+betweenness(data_ig_splitted)
+
+
 
 
 # 4. Analyze Network Metrics
@@ -65,7 +71,5 @@ plot(sub.network1, vertex.size=10,
      vertex.label.cex = 0.4,
      edge.arrow.size = 0.1)
 
-  
-# When plotting, there are too many nodes, we should consider filttering
-# 1. Setting threshold
-# 2. Setting layout
+
+
