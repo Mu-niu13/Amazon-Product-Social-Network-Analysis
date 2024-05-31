@@ -1,0 +1,157 @@
+Data Cleaning and Igraph Object Prep Works
+
+```{r, message=FALSE, warning=FALSE}
+# Loading Library
+library(readr)
+library(igraph)
+library(rsample)
+library(dplyr)
+library(stringr)
+```
+
+
+
+```{r}
+# read data
+meta <- readLines('../data/amazon-meta.txt')
+```
+
+
+```{r}
+# map into df with 5 columns: Id, Title, Group, Categories, Subcategory
+meta <- data.frame(line = meta, stringsAsFactors = FALSE)
+
+filtered_meta <- meta %>%
+  mutate(keep = grepl("Id:|title:|group:|categories:", line) |
+                 lag(grepl("categories:", line), default = FALSE)) %>%
+  filter(keep) %>%
+  select(-keep)
+
+# get row index for product that has missing info
+n <- length(filtered_meta$line)
+has_id <- grepl("Id: ", filtered_meta$line)
+
+no_id_ahead <- logical(n)  # Initialize with FALSE
+for (i in 1:n) {
+  if (i + 5 <= n) {
+    no_id_ahead[i] <- !grepl("Id:", filtered_meta[i + 5, ])
+    }
+  else {
+    no_id_ahead[i] <- TRUE
+  }
+}
+
+non_valid_indices <- which(has_id & no_id_ahead)
+# fix exception: last product
+non_valid_indices <- non_valid_indices[-c(5860)]
+
+# map to df
+result <- data.frame(Id = character(),
+                     Title = character(),
+                     Group = character(),
+                     Categories = character(),
+                     Subcategory = character(),
+                     stringsAsFactors = FALSE)
+
+
+# Process the data
+i <- 1
+while (i <= nrow(filtered_meta)) {
+  current_row <- filtered_meta$line[i]
+  if (grepl("Id:  ", current_row)) {
+    # Check if there are at least three more rows and they match the expected titles
+    if (i + 4 <= nrow(filtered_meta) &&
+        grepl("  title: ", filtered_meta$line[i + 1]) &&
+        grepl("  group: ", filtered_meta$line[i + 2]) &&
+        grepl("  categories: ", filtered_meta$line[i + 3])) {
+      
+      # Extract and clean the data
+      id <- as.integer(sub("Id:  ", "", filtered_meta$line[i]))
+      title <- sub("  title: ", "", filtered_meta$line[i + 1])
+      group <- sub("  group: ", "", filtered_meta$line[i + 2])
+      categories <- as.integer(sub("  categories: ", "", filtered_meta$line[i + 3]))
+      if (categories == 0) {
+        subcategory <- NA  # Return NA if categories are 0
+      }
+      else if (categories > 0){
+        if (group %in% c("Music", "Book", "Video")){
+          sub <- filtered_meta$line[i + 4]
+          subcategory <- str_split(sub, "\\|")[[1]][4] %>% str_replace_all("\\[.*?\\]", "")
+          if (subcategory %in% c('Reference', 'Genres')){
+            subcategory <- str_split(sub, "\\|")[[1]][5] %>% str_replace_all("\\[.*?\\]", "")
+          }
+        }
+        else if (group == "DVD"){
+          sub <- filtered_meta$line[i + 4]
+          subcategory <- str_split(sub, "\\|")[[1]][5] %>% str_replace_all("\\[.*?\\]", "")
+        }
+      }
+      # Append to result dataframe
+      result <- rbind(result, data.frame(Id = id,
+                                         Title = title,
+                                         Group = group,
+                                         Categories = categories,
+                                         Subcategory = subcategory,
+                                         stringsAsFactors = FALSE))
+      # Move index forward by 4
+      i <- i + 5
+    }
+    else {
+      # Skip the current Id and all following rows until next Id or end of data
+      i <- i + 1
+      while(i <= nrow(filtered_meta) && !grepl("Id:  ", filtered_meta$line[i])) {
+        i <- i + 1
+      }
+    }
+  }
+}
+
+# write to csv
+result %>% write.csv('../data/meta_data.csv')
+```
+
+
+
+```{r}
+# read edges data
+meta = read.csv('../data/meta_data.csv')
+data = read.table("../data/amazon0601.txt")
+colnames(data) = c("From", "To")
+
+# keep edges that link nodes we have info on
+filtered_data = data[(data$From %in% meta$Id) & (data$To %in% meta$Id), ]
+
+# write to csv
+filtered_data %>% write.csv('../data/filtered_data.csv')
+```
+
+
+```{r}
+# convert to igraph
+amz <- graph_from_data_frame(filtered_data, directed = TRUE)
+
+# create attributes for igraph object from meta data
+title = c()
+group = c()
+sub = c()
+
+for (i in V(amz)$name){
+  if (as.integer(i) %in% meta$Id){
+    title = append(title, meta[meta$Id == as.integer(i), ]$Title)
+    group = append(group, meta[meta$Id == as.integer(i), ]$Group)
+    sub = append(sub, meta[meta$Id == as.integer(i), ]$Subcategory)
+  }
+}
+
+# handle missing value
+sub[is.na(sub)] <- "missing"
+
+V(amz)$title <- title
+V(amz)$group <- group
+V(amz)$sub <- sub
+
+# save igraph object
+saveRDS(amz, file = '../data/amz_igraph.rds')
+```
+
+

@@ -1,0 +1,103 @@
+
+
+```{r, message=FALSE}
+# library
+library(readr)
+library(igraph)
+library(rsample)
+```
+
+
+```{r}
+amz <- readRDS(file = '../data/amz_igraph.rds')
+
+amz
+```
+
+
+#### 2. Generate Induced Subgraphs:
+
+
+* Create four induced subgraphs with 200 random nodes each from your dataset.
+
+Randomly select one node from music, book, video, DVD, and keep getting the nodes that are connected to it until reach 200 nodes
+
+```{r}
+nodes_to_explore <- list(music.random)
+connected_nodes <- c(music.random)
+visited_nodes <- numeric(0)
+
+current_node <- nodes_to_explore[[1]]
+nodes_to_explore <- nodes_to_explore[-1]
+
+visited_nodes <- c(visited_nodes, current_node)
+
+neighbors <- neighbors(amz, current_node)
+new_neighbors <- neighbors[!neighbors %in% connected_nodes]
+nodes_to_explore <- c(nodes_to_explore, as.list(new_neighbors))
+connected_nodes <- c(connected_nodes, new_neighbors)
+```
+
+
+```{r}
+# Function to retrieve connected nodes up to a given count
+retrieve_connected_nodes <- function(graph, start_node, count = 200) {
+  # Initialize the list with the start node
+  nodes_to_explore <- list(start_node)
+  connected_nodes <- c(start_node)
+  
+  # Keep a list to avoid revisiting nodes
+  visited_nodes <- numeric(0)
+  
+  # Explore the graph until we reach the desired number of nodes
+  while (length(nodes_to_explore) > 0 && length(connected_nodes) < count) {
+    current_node <- nodes_to_explore[[1]]
+    nodes_to_explore <- nodes_to_explore[-1]  # Remove the explored node
+    
+    # Skip if already visited
+    if (current_node %in% visited_nodes) next
+    
+    # Mark as visited
+    visited_nodes <- c(visited_nodes, current_node)
+    
+    # Get neighbors and add to nodes to explore
+    neighbors <- neighbors(graph, current_node)
+    new_neighbors <- neighbors[!neighbors %in% connected_nodes]
+    nodes_to_explore <- c(nodes_to_explore, as.list(new_neighbors))
+    connected_nodes <- c(connected_nodes, new_neighbors)
+    
+    # Limit the collection if it exceeds the desired count
+    if (length(connected_nodes) > count) {
+      connected_nodes <- connected_nodes[1:count]
+      break
+    }
+  }
+  
+  # Return the vertex sequence of connected nodes
+  return(connected_nodes)
+}
+```
+
+```{r}
+# music
+set.seed(194)
+
+# randomly select 1 node from music group
+music.random = sample(V(amz)[V(amz)$group == "Music"], 1)
+
+# apply function to get 200 related nodes
+music.nodes = retrieve_connected_nodes(amz, music.random)
+
+sub.network1 <- induced_subgraph(amz, music.nodes)
+plot(sub.network1)
+```
+
+
+
+
+
+
+
+
+
+
