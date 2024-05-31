@@ -15,29 +15,13 @@ amz
 ```
 
 
-#### 2. Generate Induced Subgraphs:
+#### 2. Generate 4 Induced Subgraphs:
 
 
-* Create four induced subgraphs with 200 random nodes each from your dataset.
+Methodology: for each subgraph, randomly select one node from music, book, video, DVD, and keep retrieving the nodes that are connected/related to it until reach 200 nodes
 
-Randomly select one node from music, book, video, DVD, and keep getting the nodes that are connected to it until reach 200 nodes
 
-```{r}
-nodes_to_explore <- list(music.random)
-connected_nodes <- c(music.random)
-visited_nodes <- numeric(0)
-
-current_node <- nodes_to_explore[[1]]
-nodes_to_explore <- nodes_to_explore[-1]
-
-visited_nodes <- c(visited_nodes, current_node)
-
-neighbors <- neighbors(amz, current_node)
-new_neighbors <- neighbors[!neighbors %in% connected_nodes]
-nodes_to_explore <- c(nodes_to_explore, as.list(new_neighbors))
-connected_nodes <- c(connected_nodes, new_neighbors)
-```
-
+* Nodes Retrieving Function:
 
 ```{r}
 # Function to retrieve connected nodes up to a given count
@@ -78,6 +62,11 @@ retrieve_connected_nodes <- function(graph, start_node, count = 200) {
 }
 ```
 
+
+
+* Music:
+
+
 ```{r}
 # music
 set.seed(194)
@@ -88,16 +77,64 @@ music.random = sample(V(amz)[V(amz)$group == "Music"], 1)
 # apply function to get 200 related nodes
 music.nodes = retrieve_connected_nodes(amz, music.random)
 
-sub.network1 <- induced_subgraph(amz, music.nodes)
-plot(sub.network1)
+music.network <- induced_subgraph(amz, music.nodes)
+plot(music.network)
 ```
 
 
 
+* Book:
+
+
+```{r}
+# book
+set.seed(194)
+
+# randomly select 1 node from book group
+book.random = sample(V(amz)[V(amz)$group == "Book"], 1)
+
+# apply function to get 200 related nodes
+book.nodes = retrieve_connected_nodes(amz, book.random)
+
+book.network <- induced_subgraph(amz, book.nodes)
+plot(book.network)
+```
 
 
 
+* Video:
 
 
+```{r}
+# music
+set.seed(194)
+
+# randomly select 1 node from video group
+video.random = sample(V(amz)[V(amz)$group == "Video"], 1)
+
+# apply function to get 200 related nodes
+video.nodes = retrieve_connected_nodes(amz, video.random)
+
+video.network <- induced_subgraph(amz, video.nodes)
+plot(video.network)
+```
+
+
+* DVD:
+
+
+```{r}
+# music
+set.seed(194)
+
+# randomly select 1 node from music group
+dvd.random = sample(V(amz)[V(amz)$group == "DVD"], 1)
+
+# apply function to get 200 related nodes
+dvd.nodes = retrieve_connected_nodes(amz, dvd.random)
+
+dvd.network <- induced_subgraph(amz, dvd.nodes)
+plot(dvd.network)
+```
 
 
