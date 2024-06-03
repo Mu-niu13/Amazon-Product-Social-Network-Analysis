@@ -213,14 +213,27 @@ degree_all <- degree(g, mode = "all")
 in_degree <- degree(g, mode = "in")
 out_degree <- degree(g, mode = "out")
 
-# Display the results
-degree_all
-in_degree
-out_degree
+selected_nodes <- names(in_degree[in_degree > 300])
 
+
+```
+
+
+```{r}
+
+edgelist <- matrix(unlist(filtered_edges), ncol = 2) 
+
+igraph_network <- graph.edgelist(edgelist, directed = FALSE)
+
+network.adjacency <- as_adj(igraph_network)
+
+image(Matrix(network.adjacency))
 ```
   
   
 # When plotting, there are too many nodes, we should consider filttering
 # 1. Setting threshold
 # 2. Setting layout
+
+
+# 30 seconds to grap attraction to your project: 3 sentences. What it is? How each of you contribute? What do you find out?
