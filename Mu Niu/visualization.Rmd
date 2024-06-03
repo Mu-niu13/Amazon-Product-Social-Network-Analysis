@@ -1,3 +1,9 @@
+---
+title: 'PSTAT 194CS Final Project'
+author: "Kai Wa Ho, Jingtang, Mu Niu"
+date: "2024-06-03"
+output: pdf_document
+---
 
 
 ```{r, message=FALSE}
@@ -585,6 +591,200 @@ plot_ly() %>%
     yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
     hovermode = 'closest'
     )
+```
+
+
+
+
+
+
+
+
+
+
+
+## 4. Analyze Network Metrics
+***Music***
+```{r}
+# Network Metrics
+# Density
+network_density <- edge_density(music.network)
+cat("Network Density:", network_density, "\n")
+
+# Average Path Length
+avg_path_length <- average.path.length(music.network, directed = FALSE)
+cat("Average Path Length:", avg_path_length, "\n")
+
+# Diameter
+network_diameter <- diameter(music.network, directed = FALSE)
+cat("Network Diameter:", network_diameter, "\n")
+
+# Node Metrics
+# Degree
+node_degree <- degree(music.network)
+cat("Node Degree:\n")
+print(summary(node_degree))
+
+# Betweenness Centrality
+node_betweenness <- betweenness(music.network)
+cat("Node Betweenness Centrality:\n")
+print(summary(node_betweenness))
+
+# Closeness Centrality
+node_closeness <- closeness(music.network)
+cat("Node Closeness Centrality:\n")
+print(summary(node_closeness))
+
+# Eigenvector Centrality
+node_eigenvector <- evcent(music.network)$vector
+cat("Node Eigenvector Centrality:\n")
+print(summary(node_eigenvector))
+
+# Edge Metrics
+# Edge Betweenness
+edge_betweenness <- edge.betweenness(music.network)
+cat("Edge Betweenness:\n")
+print(summary(edge_betweenness))
+```
+***Network Density: 0.2367816***        
+The density of the network is approximately 0.237, which means that about 23.7% of all possible edges between nodes are present. This indicates a moderately connected network, suggesting that a fair number of music products are frequently co-purchased or associated with each other, but there is still a significant proportion that are not directly connected.
+    
+***Average Path Length: 1.889655***       
+The average number of steps along the shortest paths for all possible pairs of nodes is about 1.89. This relatively short path length implies that, on average, any two music products in this network are separated by less than two steps, indicating that products are closely related and often co-purchased.
+    
+***Network Diameter: 3***       
+The diameter of the network is 3, which is the longest shortest path between any two nodes in the network. This small diameter suggests that the network is compact, meaning that even the most distantly related products are not far apart in terms of purchase patterns.
+    
+***Node Degree***       
+The degree distribution shows that the minimum degree is 3, and the maximum degree is 27. The median degree is 14, indicating that half of the nodes have at least 14 connections. The mean degree is about 13.73, showing a relatively balanced distribution of connections among nodes. Nodes with higher degrees are likely popular music products frequently purchased with many others.
+    
+***Node Betweenness Centrality***
+Betweenness centrality measures the extent to which a node lies on paths between other nodes. A high mean value (33.767) and a maximum value (185.015) indicate that certain nodes play critical roles as bridges or connectors in the network. These nodes are essential for maintaining the network's overall connectivity and can be key products influencing purchase patterns.
+    
+***Node Closeness Centrality***
+Closeness centrality measures how close a node is to all other nodes in the network. Nodes with higher closeness centrality (closer to the maximum value of 0.02041) can quickly interact with all other nodes, making them influential in spreading information or trends within the network.
+    
+***Node Eigenvector Centrality***
+Eigenvector centrality assigns relative scores to all nodes based on the principle that connections to high-scoring nodes contribute more to the score of the node in question. The maximum value of 1.0 and a mean of 0.46907 indicate that some nodes are highly influential, connected to other well-connected nodes, making them central in the network.
+    
+***Edge Metrics***
+Edge betweenness measures the number of times an edge is part of the shortest path between any two nodes. A mean of 9.141 and a maximum of 71 indicate that some edges are crucial for maintaining the network's structure. These edges often represent key relationships between products that are essential for the flow of connections within the network.
+    
+***Summary***
+The metrics indicate that the music products network is moderately dense, compact, and features nodes and edges with varying levels of influence and connectivity. Some nodes and edges are critical for maintaining the network's overall structure, indicating popular or influential music products and key associations among them.
+
+
+***Book***
+```{r}
+# Network Metrics
+# Density
+network_density <- edge_density(book.network)
+cat("Network Density:", network_density, "\n")
+
+# Average Path Length
+avg_path_length <- average.path.length(book.network, directed = FALSE)
+cat("Average Path Length:", avg_path_length, "\n")
+
+# Diameter
+network_diameter <- diameter(book.network, directed = FALSE)
+cat("Network Diameter:", network_diameter, "\n")
+
+# Node Metrics
+# Degree
+node_degree <- degree(book.network)
+cat("Node Degree:\n")
+print(summary(node_degree))
+
+# Betweenness Centrality
+node_betweenness <- betweenness(book.network)
+cat("Node Betweenness Centrality:\n")
+print(summary(node_betweenness))
+
+# Closeness Centrality
+node_closeness <- closeness(book.network)
+cat("Node Closeness Centrality:\n")
+print(summary(node_closeness))
+
+# Eigenvector Centrality
+node_eigenvector <- evcent(book.network)$vector
+cat("Node Eigenvector Centrality:\n")
+print(summary(node_eigenvector))
+
+# Edge Metrics
+# Edge Betweenness
+edge_betweenness <- edge.betweenness(book.network)
+cat("Edge Betweenness:\n")
+print(summary(edge_betweenness))
+
+```
+
+
+
+***Video***
+```{r}
+# Network Metrics
+# Density
+network_density <- edge_density(video.network)
+cat("Network Density:", network_density, "\n")
+
+# Average Path Length
+avg_path_length <- average.path.length(video.network, directed = FALSE)
+cat("Average Path Length:", avg_path_length, "\n")
+
+# Diameter
+network_diameter <- diameter(video.network, directed = FALSE)
+cat("Network Diameter:", network_diameter, "\n")
+
+# Node Metrics
+# Degree
+node_degree <- degree(video.network)
+cat("Node Degree:\n")
+print(summary(node_degree))
+
+# Betweenness Centrality
+node_betweenness <- betweenness(video.network)
+cat("Node Betweenness Centrality:\n")
+print(summary(node_betweenness))
+
+# Closeness Centrality
+node_closeness <- closeness(video.network)
+cat("Node Closeness Centrality:\n")
+print(summary(node_closeness))
+
+# Eigenvector Centrality
+node_eigenvector <- evcent(video.network)$vector
+cat("Node Eigenvector Centrality:\n")
+print(summary(node_eigenvector))
+
+# Edge Metrics
+# Edge Betweenness
+edge_betweenness <- edge.betweenness(video.network)
+cat("Edge Betweenness:\n")
+print(summary(edge_betweenness))
+
+```
+
+
+## 5. Community Detection
+***Music***
+```{r}
+# Community Detection
+# Walktrap Algorithm
+walktrap_communities <- cluster_walktrap(music.network)
+cat("Walktrap Algorithm:\n")
+print(membership(walktrap_communities))
+cat("Modularity:", modularity(walktrap_communities), "\n")
+
+# Infomap Algorithm
+infomap_communities <- cluster_infomap(music.network)
+cat("Infomap Algorithm:\n")
+print(membership(infomap_communities))
+cat("Modularity:", modularity(infomap_communities), "\n")
+
+# Visualize communities (optional)
+par(mfrow=c(1,3))
+plot(walktrap_communities, music.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+plot(infomap_communities, music.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 ```
 
 

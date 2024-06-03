@@ -8,20 +8,29 @@ library(rsample)
 setwd("/Users/kai/Documents/GitHub/Amazon-Product-Social-Network-Analysis/Data")
 data <- read.table("amazon0601.txt")
 code_book <- read.csv("meta_data.csv")
-
+code_book <- as.data.frame(code_book)
+data[data$"From" == 4,]
 
 # Re-name
 colnames(data) <- c("From", "To")
 
+# Sampling
+data <- subset(data, From > 0)
+data <- subset(data, To > 0)
+
+# 1 to 2, 3, 4, 155, 185, 233, 234, 235, 3943
+# 2 to 1
+# 3 to 1
+df <- data[data$'From' %in% c(1, 2, 3, 7) | data$'To' %in% c(1, 2, 3, 7) ,]
 
 
-# Splitting data
-data_split <- initial_split(data, prop = 0.003)
-data_split_training <- training(data_split)
 
-# Convertting into igraph
-data_ig_original <- graph_from_data_frame(data, directed = TRUE)
-data_ig_splitted <- graph_from_data_frame(data_split_training, directed = TRUE)
+
+
+#df <- data[data$'From' %in% c(1, 2, 3, 4) | data$'To' %in% c(2, 3, 4, 155, 185, 233, 234, 235, 3943), ]
+
+
+data_ig <- graph_from_data_frame(df)
 
 # Basic Elements
 # Represents individuals in the data set
@@ -58,7 +67,15 @@ betweenness(data_ig_splitted)
 
 
 
+
 # 4. Analyze Network Metrics
+# Adj
+edglist <- matrix(unlist(df), ncol = 2)
+edglist.igraph <- graph.edgelist(edglist, directed = TRUE)
+edglist.adjacency <- as_adj(edglist.igraph)
+edglist.adjacency
+df
+
 hist(degree(sub.network1, mode = "in"),
      breaks=1:vcount(sub.network1)-1, 
      main="Indegree histogram")
@@ -67,9 +84,15 @@ hist(degree(sub.network1, mode = "out"),
      breaks=1:vcount(sub.network1)-1, 
      main="Outdegree histogram")
 
-plot(sub.network1, vertex.size=10,
+plot(data_ig, vertex.size=10,
      vertex.label.cex = 0.4,
      edge.arrow.size = 0.1)
+
+
+
+
+
+
 
 
 
