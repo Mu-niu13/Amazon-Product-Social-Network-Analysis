@@ -794,3 +794,438 @@ plot(infomap_communities, music.network, main="Infomap Algorithm", vertex.size=1
 
 
 
+
+## 6. Adjacency Matrix
+
+### Music
+
+```{r}
+# Load igraph library
+library(igraph)
+
+# Create the graph object from the edge list
+edges_M <- c("219045", "239771",
+           "219045", "240889",
+           "219045", "269387",
+           "230470", "239763",
+           "230470", "239764",
+           "230470", "239765",
+           "230470", "239766",
+           "230470", "239767",
+           "230470", "239768",
+           "230470", "239769",
+           "230470", "239771",
+           "230470", "239772",
+           "239763", "230470",
+           "239763", "239764",
+           "239763", "239765",
+           "239763", "239766",
+           "239763", "239768",
+           "239763", "239769",
+           "239763", "239771",
+           "239763", "240889",
+           "239763", "240890",
+           "239763", "240892",
+           "239764", "230470",
+           "239764", "239765",
+           "239764", "239766",
+           "239764", "239771",
+           "239764", "240888",
+           "239764", "251179",
+           "239764", "251180",
+           "239764", "269387",
+           "239764", "269388",
+           "239765", "230470",
+           "239765", "239764",
+           "239765", "239766",
+           "239765", "239769",
+           "239765", "239772",
+           "239765", "251179",
+           "239765", "251180",
+           "239765", "270419",
+           "239765", "287512",
+           "239766", "230470",
+           "239766", "239763",
+           "239766", "239764",
+           "239766", "239765",
+           "239766", "239769",
+           "239766", "251179",
+           "239766", "269388",
+           "239766", "270419",
+           "239766", "287512",
+           "239767", "230470",
+           "239767", "239768",
+           "239768", "230470",
+           "239768", "239763",
+           "239768", "239764",
+           "239768", "239766",
+           "239768", "239767",
+           "239768", "240888",
+           "239768", "251177",
+           "239768", "251179",
+           "239768", "270419",
+           "239769", "230470",
+           "239769", "239763",
+           "239769", "239764",
+           "239769", "239765",
+           "239769", "239766",
+           "239769", "251179",
+           "239769", "269388",
+           "239769", "270419",
+           "239771", "239763",
+           "239771", "239764",
+           "239771", "240888",
+           "239771", "240889",
+           "239771", "240890",
+           "239771", "240891",
+           "239771", "240892",
+           "239771", "240893",
+           "239771", "240894",
+           "239771", "240895",
+           "239772", "230470",
+           "239772", "239764",
+           "239772", "239765",
+           "239772", "239766",
+           "239772", "251180",
+           "239772", "270419",
+           "239772", "287512",
+           "240888", "230470",
+           "240888", "239764",
+           "240888", "239771",
+           "240888", "240889",
+           "240888", "240890",
+           "240888", "240891",
+           "240888", "240892",
+           "240888", "240894",
+           "240888", "240899",
+           "240888", "304504",
+           "240889", "239771",
+           "240889", "240888",
+           "240889", "240890",
+           "240889", "240891",
+           "240889", "240892",
+           "240889", "240893",
+           "240889", "240899",
+           "240890", "239763",
+           "240890", "239771",
+           "240890", "240888",
+           "240890", "240889",
+           "240890", "240891",
+           "240891", "239771",
+           "240891", "240888",
+           "240891", "240889",
+           "240891", "240890",
+           "240891", "240892",
+           "240891", "240893",
+           "240891", "240899",
+           "240892", "239764",
+           "240892", "239771",
+           "240892", "240888",
+           "240892", "240889",
+           "240892", "240891",
+           "240892", "240899",
+           "240893", "239771",
+           "240893", "240889",
+           "240893", "240891",
+           "240894", "239764",
+           "240894", "239771",
+           "240894", "240888",
+           "240894", "240889",
+           "240894", "240890",
+           "240894", "240893",
+           "240894", "240899",
+           "240895", "239771",
+           "240895", "240893",
+           "240899", "240888",
+           "240899", "240889",
+           "240899", "240891",
+           "240899", "240892",
+           "240899", "304504",
+           "251177", "239764",
+           "251177", "239765",
+           "251177", "239766",
+           "251177", "239768",
+           "251177", "251179",
+           "251177", "269388",
+           "251179", "239764",
+           "251179", "239765",
+           "251179", "239766",
+           "251179", "239769",
+           "251179", "240892",
+           "251179", "251180",
+           "251179", "269387",
+           "251179", "269388",
+           "251179", "270419",
+           "251180", "230470",
+           "251180", "239764",
+           "251180", "239765",
+           "251180", "239766",
+           "251180", "239771",
+           "251180", "240892",
+           "251180", "251179",
+           "251180", "269387",
+           "251180", "269388",
+           "269387", "219045",
+           "269387", "239764",
+           "269387", "239766",
+           "269387", "239771",
+           "269387", "251179",
+           "269387", "251180",
+           "269387", "269388",
+           "269387", "332118",
+           "269387", "332119",
+           "269388", "239764",
+           "269388", "239765",
+           "269388", "239766",
+           "269388", "251177",
+           "269388", "251179",
+           "269388", "251180",
+           "269388", "269387",
+           "269388", "270419",
+           "270419", "239764",
+           "270419", "239765",
+           "270419", "239766",
+           "270419", "239769",
+           "270419", "251179",
+           "270419", "269388",
+           "270419", "287512",
+           "287512", "239765",
+           "287512", "239766",
+           "287512", "239772",
+           "287512", "240888",
+           "287512", "270419",
+           "304504", "239771",
+           "304504", "240888",
+           "304504", "240889",
+           "304504", "240899",
+           "332118", "230470",
+           "332118", "239764",
+           "332118", "239771",
+           "332118", "240889",
+           "332118", "251180",
+           "332118", "269387",
+           "332118", "332119",
+           "332119", "239771",
+           "332119", "240889",
+           "332119", "251180",
+           "332119", "269387",
+           "332119", "332118")
+
+edge_data <- get.data.frame(music.network, what = "edges")
+
+# Join edge data with vertex data to get coordinates for 'from' and 'to'
+edge_data <- merge(edge_data, vertex_data, by.x = "from", by.y = "Id", all.x = TRUE)
+edge_data <- merge(edge_data, vertex_data, by.x = "to", by.y = "Id", all.x = TRUE, suffixes = c(".from", ".to"))
+
+# Prepare data for Plotly plot
+edges_m <- list(
+  x = c(rbind(edge_data$x.from, edge_data$x.to, NA)),
+  y = c(rbind(edge_data$y.from, edge_data$y.to, NA)),
+  type = "scatter",
+  mode = "lines",
+  line = list(color = "grey", width = 0.5)
+)
+
+
+edgelist_M <- matrix(unlist(edges_m), ncol = 2) 
+
+igraph_network_M <- graph.edgelist(edgelist_M, directed = TRUE)
+
+network.adjacency_M <- as_adj(igraph_network_M)
+
+network.adjacency_M
+
+image(Matrix(network.adjacency_M))
+
+
+```
+
+```{r}
+# edgelist <- matrix(unlist(edges), ncol = 2) 
+# 
+# igraph_network <- graph.edgelist(edgelist, directed = TRUE)
+# 
+# network.adjacency <- as_adj(igraph_network)
+# 
+# image(Matrix(network.adjacency))
+# 
+# network.adjacency
+
+
+edge_data <- get.data.frame(music.network, what = "edges")
+
+# Join edge data with vertex data to get coordinates for 'from' and 'to'
+edge_data <- merge(edge_data, vertex_data, by.x = "from", by.y = "Id", all.x = TRUE)
+edge_data <- merge(edge_data, vertex_data, by.x = "to", by.y = "Id", all.x = TRUE, suffixes = c(".from", ".to"))
+
+# Prepare data for Plotly plot
+edges_m <- list(
+  x = c(rbind(edge_data$x.from, edge_data$x.to, NA)),
+  y = c(rbind(edge_data$y.from, edge_data$y.to, NA)),
+  type = "scatter",
+  mode = "lines",
+  line = list(color = "grey", width = 0.5)
+)
+
+
+edgelist_M <- matrix(unlist(edges_m), ncol = 2, byrow = TRUE) 
+
+igraph_network_M <- graph.edgelist(edgelist_M, directed = TRUE)
+
+network.adjacency_M <- as_adj(igraph_network_M)
+
+network.adjacency_M
+
+image(Matrix(network.adjacency_M))
+
+```
+
+```{r}
+# Convert the list to a matrix and then to a data frame
+edges_matrix <- matrix(unlist(edges_M), ncol = 2, byrow = TRUE)
+edges_df <- as.data.frame(edges_matrix, stringsAsFactors = FALSE)
+colnames(edges_df) <- c("V1", "V2")
+
+# Print the data frame
+print(edges_df)
+```
+
+
+```{r}
+# edges_1 <- as.vector(t(as_edgelist(music.network, names = TRUE))) # ignore self loop
+
+
+edges_list_m <- as_edgelist(music.network, names = TRUE)
+edges_1 <- c()
+for (edge in 1:nrow(edges_list_m)) {
+  from <- edges_list_m[edge, 1]
+  to <- edges_list_m[edge, 2]
+  # Filter out self-loop edges
+  if (from != to) {
+    edges_1 <- c(edges, from, to)
+  }
+}
+
+
+edgelist_M <- matrix(unlist(edges_1), ncol = 2)
+
+igraph_network_M <- graph.edgelist(edgelist_M, directed = TRUE)
+
+network.adjacency_M <- as_adj(igraph_network_M)
+
+network.adjacency_M
+
+image(Matrix(network.adjacency_M))
+```
+
+
+```{r}
+# Load igraph library
+library(igraph)
+
+# Assuming 'amz' is your original huge graph dataset
+# Load the graph if needed, for example:
+# amz <- read_graph("path_to_your_file", format = "edgelist")
+
+# Set seed for reproducibility
+set.seed(194)
+
+# Randomly select one node from the music group
+music.random <- sample(V(amz)[V(amz)$group == "Music"], 1)
+
+# Apply the function to get the connected nodes
+music.nodes <- retrieve_connected_nodes(amz, music.random)
+
+# Create the subgraph based on these nodes
+music.network <- induced_subgraph(amz, music.nodes)
+
+# Extract edges as a character vector and filter out self-loops
+edges_list <- as_edgelist(music.network, names = TRUE)
+filtered_edges <- c()
+for (i in 1:nrow(edges_list)) {
+  from <- edges_list[i, 1]
+  to <- edges_list[i, 2]
+  if (from != to) {
+    filtered_edges <- c(filtered_edges, from, to)
+  }
+}
+
+# Create the graph object from filtered edges
+g <- graph(filtered_edges, directed = FALSE)
+
+# Generate the adjacency matrix
+adj_matrix <- get.adjacency(g, sparse = FALSE)
+
+# View the adjacency matrix
+print(adj_matrix)
+
+# Optionally plot the adjacency matrix for verification
+image(adj_matrix, main = "Correct Adjacency Matrix", xlab = "Column", ylab = "Row")
+
+```
+
+
+### Book
+
+```{r}
+edges_list_B <- as_edgelist(book.network, names = TRUE)
+edges_2 <- c()
+for (edge in 1:nrow(edges_list_B)) {
+  from <- edges_list_B[edge, 1]
+  to <- edges_list_B[edge, 2]
+  # Filter out self-loop edges
+  if (from != to) {
+    edges_2 <- c(edges_2, from, to)
+  }
+}
+
+
+edgelist_B <- matrix(unlist(edges_2), ncol = 2)
+
+igraph_network_B <- graph.edgelist(edgelist_B, directed = TRUE)
+
+network.adjacency_B <- as_adj(igraph_network_B)
+
+network.adjacency_B
+
+image(Matrix(network.adjacency_B))
+```
+
+```{r}
+# Assuming edgelist_B is your matrix of edges
+# Convert the matrix to a data frame for easier manipulation
+edgelist_df <- as.data.frame(edgelist_B, stringsAsFactors = FALSE)
+colnames(edgelist_df) <- c("V1", "V2")
+
+# Convert columns to numeric for proper sorting
+edgelist_df$V1 <- as.numeric(edgelist_df$V1)
+edgelist_df$V2 <- as.numeric(edgelist_df$V2)
+
+# Order the data frame first by column V1 and then by column V2
+edgelist_df <- edgelist_df[order(edgelist_df$V1, edgelist_df$V2), ]
+
+# Print the sorted data frame without row numbers
+print(edgelist_df, row.names = FALSE)
+
+# Convert back to matrix if needed
+edgelist_B <- as.matrix(edgelist_df)
+
+igraph_network_B <- graph.edgelist(edgelist_B, directed = TRUE)
+
+network.adjacency_B <- as_adj(igraph_network_B)
+
+network.adjacency_B
+
+image(Matrix(network.adjacency_B))
+```
+
+
+
+### Video
+
+### DVD
+
+
+
+
+

@@ -22,7 +22,7 @@ amz
 ```
 
 
-## 2. Generate 4 Induced Subgraphs:
+## Generate 4 Induced Subgraphs and Visualize the Networks:
 
 
 Methodology: for each subgraph, randomly select one node from music, book, video, DVD, and keep retrieving the nodes that are connected/related to it until reach 200 nodes
@@ -338,7 +338,7 @@ plot_ly() %>%
 
 
 
-* Video:
+### Video:
 
 
 ```{r}
@@ -468,7 +468,7 @@ plot_ly() %>%
 ```
 
 
-* DVD:
+### DVD:
 
 
 ```{r}
@@ -596,10 +596,6 @@ plot_ly() %>%
     hovermode = 'closest'
     )
 ```
-
-
-
-
 
 
 
@@ -790,6 +786,626 @@ par(mfrow=c(1,3))
 plot(walktrap_communities, music.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 plot(infomap_communities, music.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 ```
+
+```{r}
+m <- fastgreedy.community(music.network)
+m
+```
+
+
+
+
+## Adjacency Matrix&Reorder Nodes
+
+### Music
+
+#### original matrix
+```{r}
+
+edges_list_M <- as_edgelist(music.network, names = TRUE)
+
+igraph_network_M <- graph.edgelist(edges_list_M, directed = TRUE)
+
+network.adjacency_M <- as_adj(igraph_network_M)
+
+network.adjacency_M
+
+image(Matrix(network.adjacency_M))
+
+
+```
+
+
+```{r}
+
+# Create the adjacency matrix
+adj_matrix <- as_adjacency_matrix(music.network, sparse = FALSE)
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Visualize the adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix), 1:ncol(adj_matrix), adj_matrix, 
+      main = "Adjacency Matrix For Music", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("white", "black"))
+
+
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix), labels = rownames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+
+```
+
+#### Reordering
+
+##### hierachical clustering to highlight
+```{r}
+# Hierarchical clustering to reorder the adjacency matrix
+d <- dist(adj_matrix) # Distance matrix
+hc <- hclust(d)       # Hierarchical clustering
+order <- hc$order     # Order of the nodes
+
+# Reorder the adjacency matrix
+adj_matrix_reordered <- adj_matrix[order, order]
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Plot the reordered adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix_reordered), 1:ncol(adj_matrix_reordered), adj_matrix_reordered, 
+      main = "Reordered Adjacency Matrix For Music", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("lightpink", "darkblue"))
+
+# Add gridlines
+grid(nx = nrow(adj_matrix_reordered), ny = ncol(adj_matrix_reordered), col = "gray", lty = "dotted")
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix_reordered), labels = rownames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix_reordered), labels = colnames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+```
+
+##### based on community
+Since we can not directly apply the fast greedy alogorithm we learned to our directed network, I decided to test different alogrithms, by applying the walktrap alogrithm to our original network, meanwhile change the original network into an undirected one then apply the fast greedy method to see which one has higher modularity and how different are the communities and reordered matrices. 
+
+###### directed
+```{r}
+# Detect communities
+communities <- cluster_walktrap(music.network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
+
+# List the members of each community
+community_list <- split(V(music.network)$name, membership)
+community_list
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(music.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Music Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+
+```
+
+###### undirected
+```{r}
+
+# change the network to undirected
+undirected_music_network <- as.undirected(music.network, mode="collapse")
+
+# Detect communities using the walktrap algorithm
+communities <- cluster_fast_greedy(undirected_music_network)
+
+membership <- membership(communities)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
+
+# List the members of each community
+community_list <- split(V(undirected_music_network)$name, membership)
+community_list
+
+
+
+# Reorder nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_music_network))[ordered_indices, ordered_indices]
+
+# Plot reordered adjacency matrix with community colors
+image(1:nrow(ordered_adjacency_matrix), 1:ncol(ordered_adjacency_matrix), ordered_adjacency_matrix, col=c("white", "black"), main="Reordered Adjacency Matrix Based on Community", axes=FALSE, )
+axis(1, at=1:nrow(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
+axis(2, at=1:ncol(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
+```
+
+
+### Book
+
+#### original matrix
+
+```{r}
+edges_list_B <- as_edgelist(book.network, names = TRUE)
+
+
+igraph_network_B <- graph.edgelist(edges_list_B, directed = TRUE)
+
+network.adjacency_B <- as_adj(igraph_network_B)
+
+network.adjacency_B
+
+image(Matrix(network.adjacency_B))
+```
+
+```{r}
+# Create the adjacency matrix
+adj_matrix <- as_adjacency_matrix(book.network, sparse = FALSE)
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Visualize the adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix), 1:ncol(adj_matrix), adj_matrix, 
+      main = "Adjacency Matrix For Books", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("white", "black"))
+
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix), labels = rownames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+
+```
+
+#### Reordering
+
+##### hierachical clustering to highlight
+
+```{r}
+### Reorder vertices to highlight patterns.
+# Hierarchical clustering to reorder the adjacency matrix
+d <- dist(adj_matrix) # Distance matrix
+hc <- hclust(d)       # Hierarchical clustering
+order <- hc$order     # Order of the nodes
+
+# Reorder the adjacency matrix
+adj_matrix_reordered <- adj_matrix[order, order]
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Plot the reordered adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix_reordered), 1:ncol(adj_matrix_reordered), adj_matrix_reordered, 
+      main = "Reordered Adjacency Matrix For Books", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("lightpink", "darkblue"))
+
+# Add gridlines
+grid(nx = nrow(adj_matrix_reordered), ny = ncol(adj_matrix_reordered), col = "gray", lty = "dotted")
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix_reordered), labels = rownames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix_reordered), labels = colnames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+```
+
+##### based on community
+
+###### directed
+
+```{r}
+# Detect communities
+communities <- cluster_walktrap(book.network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
+
+# List the members of each community
+community_list <- split(V(book.network)$name, membership)
+community_list
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Music Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+
+```
+
+
+###### undirected
+```{r}
+# change the network to undirected
+undirected_book_network <- as.undirected(book.network, mode="collapse")
+
+# Detect communities using the fastgreedy algorithm
+communities <- cluster_fast_greedy(undirected_book_network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
+
+# List the members of each community
+community_list <- split(V(undirected_book_network)$name, membership)
+community_list
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_book_network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_book_network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_book_network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+### Video
+
+#### Original Matrix
+
+#### Reordering
+
+```{r}
+edges_list_V <- as_edgelist(video.network, names = TRUE)
+
+
+igraph_network_V <- graph.edgelist(edges_list_V, directed = TRUE)
+
+network.adjacency_V <- as_adj(igraph_network_V)
+
+network.adjacency_V
+
+image(Matrix(network.adjacency_V))
+```
+
+```{r}
+# Create the adjacency matrix
+adj_matrix <- as_adjacency_matrix(video.network, sparse = FALSE)
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Visualize the adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix), 1:ncol(adj_matrix), adj_matrix, 
+      main = "Adjacency Matrix For Videos", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("white", "black"))
+
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix), labels = rownames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+```
+
+##### Hierarchical clustering
+
+```{r}
+# Hierarchical clustering to reorder the adjacency matrix
+d <- dist(adj_matrix) # Distance matrix
+hc <- hclust(d)       # Hierarchical clustering
+order <- hc$order     # Order of the nodes
+
+# Reorder the adjacency matrix
+adj_matrix_reordered <- adj_matrix[order, order]
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Plot the reordered adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix_reordered), 1:ncol(adj_matrix_reordered), adj_matrix_reordered, 
+      main = "Reordered Adjacency Matrix For Videos", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("lightpink", "darkblue"))
+
+# Add gridlines
+grid(nx = nrow(adj_matrix_reordered), ny = ncol(adj_matrix_reordered), col = "gray", lty = "dotted")
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix_reordered), labels = rownames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix_reordered), labels = colnames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+```
+
+##### based on community
+
+###### directed
+```{r}
+# Detect communities
+communities <- cluster_walktrap(video.network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
+
+# List the members of each community
+community_list <- split(V(video.network)$name, membership)
+community_list
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(video.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Music Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(video.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(video.network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+###### undirected
+```{r}
+# change the network to undirected
+undirected_video_network <- as.undirected(video.network, mode="collapse")
+
+# Detect communities using the fastgreedy algorithm
+communities <- cluster_fast_greedy(undirected_video_network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
+
+# List the members of each community
+community_list <- split(V(undirected_video_network)$name, membership)
+community_list
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_video_network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_video_network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_video_network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+
+### DVD
+
+```{r}
+edges_list_D <- as_edgelist(dvd.network, names = TRUE)
+
+
+igraph_network_D <- graph.edgelist(edges_list_D, directed = TRUE)
+
+network.adjacency_D <- as_adj(igraph_network_D)
+
+network.adjacency_D
+
+image(Matrix(network.adjacency_D))
+```
+
+```{r}
+# Create the adjacency matrix
+adj_matrix <- as_adjacency_matrix(dvd.network, sparse = FALSE)
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Visualize the adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix), 1:ncol(adj_matrix), adj_matrix, 
+      main = "Adjacency Matrix For DVD", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("white", "black"))
+
+
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix), labels = rownames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
+
+
+### Reorder vertices to highlight patterns.
+# Hierarchical clustering to reorder the adjacency matrix
+d <- dist(adj_matrix) # Distance matrix
+hc <- hclust(d)       # Hierarchical clustering
+order <- hc$order     # Order of the nodes
+
+# Reorder the adjacency matrix
+adj_matrix_reordered <- adj_matrix[order, order]
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Plot the reordered adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix_reordered), 1:ncol(adj_matrix_reordered), adj_matrix_reordered, 
+      main = "Reordered Adjacency Matrix For DVD", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("lightpink", "darkblue"))
+
+# Add gridlines
+grid(nx = nrow(adj_matrix_reordered), ny = ncol(adj_matrix_reordered), col = "gray", lty = "dotted")
+
+# Add axis labels
+axis(1, at = 1:nrow(adj_matrix_reordered), labels = rownames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix_reordered), labels = colnames(adj_matrix_reordered), las = 2, cex.axis = 0.7, tick = FALSE)
+```
+
+
+
+## 7. Reorder Nodes
+
+```{r adj_matrix_plot, fig.width=10, fig.height=8}
+# Assuming you have a subgraph 'music.network'
+adj_matrix <- as_adjacency_matrix(music.network, sparse = FALSE)
+print(adj_matrix)
+
+# Plot the adjacency matrix
+image(adj_matrix, main = "Adjacency Matrix", xlab = "Nodes", ylab = "Nodes")
+
+# Hierarchical clustering to reorder the adjacency matrix
+d <- dist(adj_matrix) # Distance matrix
+hc <- hclust(d)       # Hierarchical clustering
+order <- hc$order     # Order of the nodes
+
+# Reorder the adjacency matrix
+adj_matrix_reordered <- adj_matrix[order, order]
+
+# Plot the reordered adjacency matrix
+image(adj_matrix_reordered, main = "Reordered Adjacency Matrix", xlab = "Nodes", ylab = "Nodes")
+
+
+```
+
+### Music
+
+
+
+```{r}
+# Use the Fruchterman-Reingold layout
+layout <- layout_with_fr(music.network, niter=2000)
+
+# Plot the network with community colors
+V(music.network)$label <- V(music.network)$name
+plot(communities, music.network, layout=layout, vertex.size=15, edge.arrow.size=0.5, edge.width=1, main="Music Network Communities")
+
+
+```
+
+
+```{r}
+
+
+# Detect communities using different algorithms
+communities_louvain <- cluster_louvain(undirected_music_network)
+communities_infomap <- cluster_infomap(undirected_music_network)
+
+# Compare modularity values
+modularity_louvain <- modularity(communities_louvain)
+modularity_infomap <- modularity(communities_infomap)
+
+print(paste("Modularity (Walktrap):", modularity_value))
+print(paste("Modularity (Louvain):", modularity_louvain))
+print(paste("Modularity (Infomap):", modularity_infomap))
+
+# Visualize different community structures
+par(mfrow=c(1, 3))
+plot(communities, music.network, vertex.size=5, vertex.label=NA, main="Walktrap")
+plot(communities_louvain, music.network, vertex.size=5, vertex.label=NA, main="Louvain")
+plot(communities_infomap, music.network, vertex.size=5, vertex.label=NA, main="Infomap")
+
+```
+
+
+
+### Book
+
+
+
+
+```{r}
+library(igraph)
+
+# Assuming g is your igraph object representing the network
+# Detect communities
+communities <- cluster_walktrap(book.network)
+
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+### Video
+
+```{r}
+library(igraph)
+
+# Assuming g is your igraph object representing the network
+# Detect communities
+communities <- cluster_walktrap(video.network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(video.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(video.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(video.network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+### DVD
+
+```{r}
+library(igraph)
+
+# Assuming g is your igraph object representing the network
+# Detect communities
+communities <- cluster_walktrap(dvd.network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(dvd.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+
 
 
 
