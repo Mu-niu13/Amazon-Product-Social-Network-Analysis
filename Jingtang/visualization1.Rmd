@@ -963,10 +963,11 @@ Infomap Algorithm identifies more, smaller communities with a slightly lower mod
 
 
 
+## Adjacency matrix and Reording metrics
 
+### Music
 
-
-
+#### Original matrix
 
 ```{r}
 
