@@ -22,7 +22,7 @@ amz
 ```
 
 
-## 2. Generate 4 Induced Subgraphs:
+#### 2. Generate 4 Induced Subgraphs:
 
 
 Methodology: for each subgraph, randomly select one node from music, book, video, DVD, and keep retrieving the nodes that are connected/related to it until reach 200 nodes
@@ -71,7 +71,7 @@ retrieve_connected_nodes <- function(graph, start_node, count = 30) {
 
 
 
-### Music:
+* Music:
 
 
 ```{r}
@@ -199,15 +199,11 @@ plot_ly() %>%
     )
 ```
 
-```{r}
-
-print(music.network, full = TRUE)
-```
 
 
 
 
-### Book:
+* Book:
 
 
 ```{r}
@@ -721,8 +717,35 @@ cat("Edge Betweenness:\n")
 print(summary(edge_betweenness))
 
 ```
-
-
+***Network Density: 0.1367816***        
+The density of the network is approximately 0.1367816, which means that about 13.67% of all possible edges between nodes are present. This indicates a moderately connected network, suggesting that a fair number of music products are frequently co-purchased or associated with each other, but there is still a significant proportion that are not directly connected.
+  
+    
+***Average Path Length: 2.604598***       
+The average number of steps along the shortest paths for all possible pairs of nodes is about 2.6 This relatively short path length implies that, on average, any two music products in this network are separated by less than two steps, indicating that products are closely related and often co-purchased.
+    
+***Network Diameter: 4***
+The diameter of the network is 4, which is the longest shortest path between any two nodes in the network. This small diameter suggests that the network is compact, meaning that even the most distantly related products are not far apart in terms of purchase patterns.
+    
+***Node Degree***       
+he minimum degree indicates the least connected node has only one connection. The maximum degree indicates the most connected node has 20 connections. The median degree of 7 and the mean degree of approximately 7.93 suggest a moderate level of connectivity across the network, with most nodes having between 5 and 10 connections.
+    
+***Node Betweenness Centrality***       
+The minimum betweenness centrality is 0, indicating some nodes are not on any shortest paths between other nodes. The maximum betweenness centrality is 126.5, indicating a node that is very central and acts as a key bridge in the network. The mean betweenness centrality of 16.3 and a median of 2 suggest that while most nodes have low betweenness, a few nodes have very high betweenness, acting as important connectors within the network.
+    
+***Node Closeness Centrality***  
+The minimum closeness centrality is 0.01, and the maximum is 0.1, indicating a range of how quickly nodes can reach other nodes. The median and mean values are around 0.05, suggesting that, on average, nodes are relatively close to each other. The presence of an NA value might indicate a disconnected or isolated node.    
+    
+***Node Eigenvector Centrality***       
+The minimum eigenvector centrality is approximately 0.008, and the maximum is 1.0, indicating that some nodes are much more influential than others. The mean eigenvector centrality of 0.235 suggests that there are several influential nodes, but only a few have very high influence.
+    
+***Edge Metrics***        
+The minimum edge betweenness is 1, and the maximum is 104.5, suggesting that some edges are critical for maintaining network connectivity.
+The mean edge betweenness of 7.513 indicates that, on average, edges play a moderate role in connecting different parts of the network.
+High values of edge betweenness highlight edges that are crucial for shortest paths within the network.
+    
+***Summary***       
+The book network exhibits a moderate level of connectivity, with a reasonable average path length and a small diameter, indicating a relatively compact structure. The degree distribution suggests that most nodes have a moderate number of connections, while the betweenness and eigenvector centrality metrics highlight the presence of key nodes that play significant roles in maintaining network connectivity and influence. The edge betweenness values suggest that certain edges are crucial for the shortest path connections in the network, emphasizing the importance of these edges in network dynamics.
 
 ***Video***
 ```{r}
@@ -767,9 +790,42 @@ cat("Edge Betweenness:\n")
 print(summary(edge_betweenness))
 
 ```
+***Network Density: 0.1885057***        
+The density of the video network is approximately 0.189, indicating that about 18.9% of all possible connections between nodes are present. This suggests a moderately connected network where nodes are reasonably well-connected but not overly dense.
+    
+***Average Path Length: 2.271264***         
+The average path length is around 2.27, which means that, on average, any node can be reached from any other node in just over two steps. This indicates a relatively compact network where information or interactions can spread quickly.
+    
+***Diameter: 4***       
+The diameter is 4, meaning the longest shortest path between any two nodes in the network is 4 steps. This further supports the notion of a compact network structure.
+
+***Node Degree***       
+The minimum degree is 1, indicating that at least one node has only one connection. The maximum degree is 23, showing the most connected node has 23 connections. The median and mean degrees are around 10, suggesting a moderately connected network where most nodes have a similar number of connections.
+    
+***Node Betweenness Centrality***       
+Betweenness centrality values vary widely, with a mean of 23.8 and a maximum of 242.43. Nodes with high betweenness centrality are critical for the flow of information, acting as bridges between different parts of the network. The high maximum value suggests the presence of a few key nodes that play a significant role in maintaining network connectivity.
+    
+***Node Closeness Centrality***       
+Closeness centrality measures indicate how quickly a node can access other nodes. The mean value of 0.03198 and a maximum of 0.07692 suggest that some nodes are very well-positioned to access the entire network quickly. One node has an NA value, which might indicate it is disconnected or an isolated node.
+        
+***Node Eigenvector Centrality***       
+Eigenvector centrality values show the influence of nodes based on their connections to other highly connected nodes. The mean of 0.347216 and a maximum of 1.0 indicate the presence of highly influential nodes within the network. These nodes are likely to be central hubs connected to other significant nodes.
+    
+***Edge Metrics***        
+Edge betweenness values range from 1 to 168, with a mean of 7.72. High edge betweenness indicates edges that are crucial for connecting different parts of the network. The maximum value of 168 suggests that some edges are very important for maintaining the shortest paths in the network.
+
+***Summary***
+The video network is moderately dense with a low average path length and diameter, indicating a compact structure where information can spread quickly. The degree distribution shows most nodes have a similar number of connections, while betweenness and eigenvector centralities highlight the presence of key nodes and edges that play crucial roles in network connectivity and influence. The metrics collectively suggest a well-connected network with certain nodes and edges being particularly significant for maintaining overall connectivity and efficiency.
+
+
+
 
 
 ## 5. Community Detection
+The Walktrap algorithm is a community detection method based on random walks. It operates on the principle that short random walks tend to stay within the same community. 
+    
+The Infomap algorithm is another community detection method that relies on the idea of information compression. It views the task of finding communities as finding an efficient compression of the information flow on the network.  
+    
 ***Music***
 ```{r}
 # Community Detection
@@ -785,12 +841,126 @@ cat("Infomap Algorithm:\n")
 print(membership(infomap_communities))
 cat("Modularity:", modularity(infomap_communities), "\n")
 
-# Visualize communities (optional)
+# Visualize communities 
 par(mfrow=c(1,3))
 plot(walktrap_communities, music.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 plot(infomap_communities, music.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 ```
+***Walktrap Algorithm***
+***Communities Detected:***       
+Community 1: Nodes - 219045, 239763, 239764, 251180, 332118, 332119       
+Community 2: Nodes - 230470, 239765, 239766, 239767, 239768, 239769, 239772, 240888, 251177, 269388, 270419, 287512        
+Community 3: Nodes - 239771, 240889, 240890, 240891, 240892, 240893, 240894, 240895, 240899, 304504        
+    
+The modularity score of 0.3337261 indicates a moderate level of community structure within the music network. This score suggests that the communities are reasonably well-defined, but there is still room for improvement in the detection of more distinct communities.       
+    
+This algorithm tends to detect smaller, more tightly-knit communities, as evidenced by the division of nodes into three distinct groups with moderately high modularity.
 
+
+***Infomap Algorithm***
+***Communities Detected:***             
+Community 1: Nodes - 219045, 230470, 239763, 239764, 239765, 239766, 239767, 239768, 239769, 239772, 251179, 269387, 269388, 270419, 287512, 332118, 332119        
+Community 2: Nodes - 239771, 240888, 240889, 240890, 240891, 240892, 240893, 240894, 240895, 240899, 304504        
+    
+The modularity score of 0.3301913 is slightly lower than that of the Walktrap algorithm, indicating a similar but slightly less pronounced community structure. This score reflects a comparable level of community definition within the music network.
+
+This algorithm generally finds slightly larger communities, with some nodes grouped differently compared to the Walktrap algorithm. The modularity score is slightly lower, indicating a similar but less distinct community structure.
+
+
+
+***Book***
+```{r}
+# Community Detection
+# Walktrap Algorithm
+walktrap_communities <- cluster_walktrap(book.network)
+cat("Walktrap Algorithm:\n")
+print(membership(walktrap_communities))
+cat("Modularity:", modularity(walktrap_communities), "\n")
+
+# Infomap Algorithm
+infomap_communities <- cluster_infomap(book.network)
+cat("Infomap Algorithm:\n")
+print(membership(infomap_communities))
+cat("Modularity:", modularity(infomap_communities), "\n")
+
+# Visualize communities
+par(mfrow=c(1,2))
+plot(walktrap_communities, book.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+plot(infomap_communities, book.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+```
+***Walktrap Algorithm***        
+***Communities Detected:***       
+Community 1: Nodes - 24689, 33385, 33389, 33390, 33392, 33540, 56737, 56738, 63101, 68821, 148774       
+Community 2: Nodes - 39392, 41940, 78445, 111338, 234339, 245481, 337176        
+Community 3: Nodes - 45, 1036, 1039, 1040, 1041, 1615, 9237, 9238, 9239, 9240, 9241        
+    
+The modularity score of 0.5908128 indicates a strong community structure. This high score suggests that the detected communities are well-defined and the division is meaningful.
+    
+This algorithm identifies three distinct communities. The high modularity score reflects that these communities are densely connected internally.
+Community 1 and Community 3 are tightly knit, while Community 2 spans a larger section of the network.     
+    
+***Infomap Algorithm***        
+***Communities Detected:***       
+Community 1: Nodes - 45, 1036, 1039, 1040, 1041, 1615, 9237, 9238, 9239, 9240, 9241, 33385       
+Community 2: Nodes - 24689, 33390, 33540        
+Community 3: Nodes - 33389, 56737, 56738, 63101, 68821        
+Community 4: Nodes - 39392, 41940, 78445, 111338, 234339, 245481, 337176        
+Community 5: Nodes - 148774       
+
+The modularity score of 0.5614716 indicates a slightly less strong but still significant community structure compared to the Walktrap algorithm.
+    
+This algorithm identifies five communities, with more granular divisions compared to the Walktrap algorithm.       
+    
+The modularity score is slightly lower, indicating that while the communities are meaningful, they are less densely connected than those identified by the Walktrap algorithm.       
+    
+    
+    
+
+***Video***
+```{r}
+# Community Detection
+# Walktrap Algorithm
+walktrap_communities <- cluster_walktrap(video.network)
+cat("Walktrap Algorithm:\n")
+print(membership(walktrap_communities))
+cat("Modularity:", modularity(walktrap_communities), "\n")
+
+# Infomap Algorithm
+infomap_communities <- cluster_infomap(video.network)
+cat("Infomap Algorithm:\n")
+print(membership(infomap_communities))
+cat("Modularity:", modularity(infomap_communities), "\n")
+
+# Visualize communities 
+par(mfrow=c(1,3))
+plot(walktrap_communities, video.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+plot(infomap_communities, video.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+
+```
+***Walktrap Algorithm***
+***Communities Detected:***
+Community 1: Nodes - 49943, 49947, 49948, 59813, 65817, 76252, 87725, 101895, 109489, 114378, 151468, 154328, 183012, 229284, 324495, 372824        
+Community 2: Nodes - 76292, 86988, 86989, 86990, 86992, 86993, 90018, 95697, 95700, 108869, 126714, 149139, 149795, 193550        
+
+The modularity score of 0.4274242 indicates a moderately strong community structure. This score suggests that the detected communities are meaningful and well-defined.    
+    
+
+This algorithm identifies two main communities, with one larger community (Community 1) and a smaller one (Community 2).
+The high modularity score reflects that these communities are densely connected internally.  
+    
+Walktrap Algorithm detects fewer, larger communities with a higher modularity score. This suggests a strong but less detailed community structure. Suitable for understanding broader groupings within the network.
+        
+***Infomap Algorithm***
+***Communities Detected:***
+Community 1: Nodes - 49943, 49947, 49948, 59813, 65817, 76252, 87725, 101895, 109489, 114378, 151468, 154328, 183012, 229284        
+Community 2: Nodes - 76292, 86988, 86989, 86990, 86992, 86993, 90018, 95697, 95700, 108869, 126714, 149139, 149795, 193550        
+Community 3: Nodes - 324495, 372824       
+    
+The modularity score of 0.425119 is slightly lower than that of the Walktrap algorithm, indicating a similar but slightly less strong community structure.        
+    
+This algorithm identifies three communities, splitting some of the nodes from the larger community in the Walktrap algorithm into a third, smaller community.
+     
+Infomap Algorithm identifies more, smaller communities with a slightly lower modularity score. This indicates a more detailed division of the network, capturing finer community structures. Useful for a more nuanced understanding of the network's community structure.    
 
 
 
