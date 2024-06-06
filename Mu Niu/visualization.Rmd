@@ -331,7 +331,7 @@ plot_ly() %>%
 
 
 ```{r}
-# music
+# video
 set.seed(194)
 
 # randomly select 1 node from video group
@@ -461,7 +461,7 @@ plot_ly() %>%
 
 
 ```{r}
-# music
+# dvd
 set.seed(194)
 
 # randomly select 1 node from music group
@@ -588,9 +588,22 @@ plot_ly() %>%
 
 
 
-
-
-
+```{r}
+## post to public for presentation
+# Sys.setenv("plotly_username" = "mniu")
+# Sys.setenv("plotly_api_key" = "hjVylOWj5bsEor6pcanT")
+# response <- api_create(music, filename = "music_products",
+#                        world_readable = TRUE, fileopt = "new")
+# 
+# response <- api_create(book, filename = "book_products",
+#                        world_readable = TRUE, fileopt = "new")
+# 
+# response <- api_create(video, filename = "video_products",
+#                        world_readable = TRUE, fileopt = "new")
+# 
+# response <- api_create(dvd, filename = "dvd_products",
+#                        world_readable = TRUE, fileopt = "new")
+```
 
 
 
