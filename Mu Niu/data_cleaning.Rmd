@@ -125,7 +125,6 @@ filtered_data = data[(data$From %in% meta$Id) & (data$To %in% meta$Id), ]
 filtered_data %>% write.csv('../data/filtered_data.csv')
 ```
 
-<<<<<<< Updated upstream:Mu Niu/data_cleaning.Rmd
 
 ```{r}
 # convert to igraph
@@ -155,12 +154,3 @@ V(amz)$sub <- sub
 saveRDS(amz, file = '../data/amz_igraph.rds')
 ```
 
-
-=======
-```{r}
-head(meta_data)
-
-left_join()
-```
-
->>>>>>> Stashed changes:Mu Niu/Mu-meta_data_cleaning.Rmd

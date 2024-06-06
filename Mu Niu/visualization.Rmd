@@ -1,9 +1,3 @@
----
-title: 'PSTAT 194CS Final Project'
-author: "Kai Wa Ho, Jingtang, Mu Niu"
-date: "2024-06-03"
-output: pdf_document
----
 
 
 ```{r, message=FALSE}
@@ -68,7 +62,6 @@ retrieve_connected_nodes <- function(graph, start_node, count = 30) {
   return(connected_nodes)
 }
 ```
-
 
 
 * Music:
