@@ -19,7 +19,7 @@ amz
 #### 2. Generate 4 Induced Subgraphs:
 
 
-Methodology: for each subgraph, randomly select one node from music, book, video, DVD, and keep retrieving the nodes that are connected/related to it until reach 200 nodes
+Methodology: for each subgraph, randomly select one node from music, book, video, DVD, and keep retrieving the nodes that are connected/related to it until reach 30 nodes
 
 
 * Nodes Retrieving Function:
@@ -64,534 +64,160 @@ retrieve_connected_nodes <- function(graph, start_node, count = 30) {
 ```
 
 
-* Music:
+
+* Visualization Function:
 
 
 ```{r}
-# music
-set.seed(194)
-
-# randomly select 1 node from music group
-music.random = sample(V(amz)[V(amz)$group == "Music"], 1)
-
-# apply function to get 200 related nodes
-music.nodes = retrieve_connected_nodes(amz, music.random)
-music.network <- induced_subgraph(amz, music.nodes)
-
-# plot
-# Choose a layout that spreads out the nodes more effectively
-layout <- layout_with_fr(music.network)
-
-# Set graph margins to zero
-par(mar = c(0, 0, 2, 0))
-
-# Plot the graph with improved layout and adjusted aesthetics
-plot(music.network, layout = layout,
-     # Vertex properties
-     vertex.color = "#88398A",             # Deep purple color for vertices
-     vertex.frame.color = "#FFFFFF",       # White border for vertices for better visibility
-     vertex.size = 5,                      # Smaller vertex size to avoid overlap
-     vertex.label = V(music.network)$name, # Ensure labels are set to product IDs or similar
-     vertex.label.dist = 1,                # Distance of labels from vertices
-     vertex.label.cex = 0.8,               # Adjust label size for readability
-     vertex.label.color = "black",         # Change label color to black for contrast
-     vertex.label.font = 2,                # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                # Lighter color for edges
-     edge.width = 0.2,                     # Thinner edges
-     edge.arrow.size = 0.1,                # Smaller arrows if directed
-
-     # General plot settings
-     main = "Music Products Base Plot", # Add a title if appropriate
-     bg = "white" # Background color
-)
-
-
-
-# Color nodes based on a community detection algorithm to show clusters
-music.cluster <- cluster_optimal(music.network)
-mycomcols <- c("black", "#D3D3D3", "#88398A")
-
-
-# Plot the graph with advanced layout and adjusted aesthetics
-plot(music.network, layout = layout,
-     # Vertex properties
-     vertex.color = mycomcols[music.cluster$membership],        # Color vertices by community
-     vertex.frame.color = "#FFFFFF",               # White border for vertices for better visibility
-     vertex.size = sqrt(degree(music.network)) * 2, # Scale size by square root of degree
-     vertex.label = V(music.network)$name,         # Labels are set to product IDs
-     vertex.label.dist = 1,                        # Distance of labels from vertices
-     vertex.label.cex = 0.6,                       # Adjust label size for readability
-     vertex.label.color = "black",                 # Label color for contrast
-     vertex.label.font = 2,                        # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                        # Lighter color for edges
-     edge.width = 0.2,                             # Thinner edges
-     edge.arrow.size = 0.1,                        # Smaller arrows if directed
-
-     # General plot settings
-     main = "Music Products Community", # Add a title
-     bg = "white" # Background color
-)
-
-
-# Get vertex data including the degree for size scaling
-vertex_data <- data.frame(
-  Id = V(music.network)$name,
-  x = layout[, 1],
-  y = layout[, 2],
-  degree = degree(music.network),
-  Title = V(music.network)$title,
-  Group = V(music.network)$group,
-  Category = V(music.network)$sub
-)
-
-# Enhance hover info by including all attributes except x, y coordinates
-vertex_data$hoverinfo <- apply(vertex_data[, -c(2, 3)], 1, function(row) {
-  paste(names(row), row, sep=": ", collapse="<br>")
-})
-
-# Get edge data
-edge_data <- get.data.frame(music.network, what = "edges")
-
-# Join edge data with vertex data to get coordinates for 'from' and 'to'
-edge_data <- merge(edge_data, vertex_data, by.x = "from", by.y = "Id", all.x = TRUE)
-edge_data <- merge(edge_data, vertex_data, by.x = "to", by.y = "Id", all.x = TRUE, suffixes = c(".from", ".to"))
-
-# Prepare data for Plotly plot
-edges <- list(
-  x = c(rbind(edge_data$x.from, edge_data$x.to, NA)),
-  y = c(rbind(edge_data$y.from, edge_data$y.to, NA)),
-  type = "scatter",
-  mode = "lines",
-  line = list(color = "grey", width = 0.5)
-)
-
-nodes <- list(
-  x = vertex_data$x,
-  y = vertex_data$y,
-  hovertext = vertex_data$hoverinfo,
-  mode = "markers",  # Only markers, no text
-  marker = list(size = vertex_data$degree * 2,
-                color = mycomcols[music.cluster$membership]),
-  type = "scatter",
-  hoverinfo = "text"
-)
-
-# Create the plot
-plot_ly() %>%
-  add_trace(x = edges$x, y = edges$y, mode = edges$mode, type = edges$type, line = edges$line) %>%
-  add_trace(x = nodes$x, y = nodes$y, hovertext = nodes$hovertext, mode = nodes$mode, type = nodes$type, hoverinfo = "text", marker = nodes$marker) %>%
-  layout(
-    title = "Network Visualization of Music Products",
-    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    hovermode = 'closest'
+# Define a function to generate and plot the community for a given product group
+plot_product_community <- function(group_name, main_title) {
+  set.seed(194)
+  # Randomly select one node from the specified group
+  random_node <- sample(V(amz)[V(amz)$group == group_name], 1)
+  
+  # Apply function to get 200 related nodes
+  nodes <- retrieve_connected_nodes(amz, random_node)
+  network <- induced_subgraph(amz, nodes)
+  
+  # Choose a layout that spreads out the nodes more effectively
+  layout <- layout_with_fr(network)
+  
+  # Set graph margins to zero
+  par(mar = c(0, 0, 2, 0))
+  
+  # Base plot
+  plot(network, layout = layout,
+       vertex.color = "#88398A",
+       vertex.frame.color = "#FFFFFF",
+       vertex.size = 5,
+       vertex.label = V(network)$name,
+       vertex.label.dist = 1,
+       vertex.label.cex = 0.8,
+       vertex.label.color = "black",
+       vertex.label.font = 2,
+       edge.color = "gray50",
+       edge.width = 0.2,
+       edge.arrow.size = 0.1,
+       main = paste(main_title, "Base Plot"),
+       bg = "white"
+  )
+  
+  # Community plot
+  cluster <- cluster_optimal(network)
+  mycomcols <- c("black", "#D3D3D3", "#88398A")
+  
+  plot(network, layout = layout,
+       vertex.color = mycomcols[cluster$membership],
+       vertex.frame.color = "#FFFFFF",
+       vertex.size = sqrt(degree(network)) * 2,
+       vertex.label = V(network)$name,
+       vertex.label.dist = 1,
+       vertex.label.cex = 0.6,
+       vertex.label.color = "black",
+       vertex.label.font = 2,
+       edge.color = "gray50",
+       edge.width = 0.2,
+       edge.arrow.size = 0.1,
+       main = paste(main_title, "Community"),
+       bg = "white"
+  )
+  
+  # Get vertex data including the degree for size scaling
+  vertex_data <- data.frame(
+    Id = V(network)$name,
+    x = layout[, 1],
+    y = layout[, 2],
+    degree = degree(network),
+    Title = V(network)$title,
+    Group = V(network)$group,
+    Category = V(network)$sub
+  )
+  
+  # Enhance hover info by including all attributes except x, y coordinates
+  vertex_data$hoverinfo <- apply(vertex_data[, -c(2, 3)], 1, function(row) {
+    paste(names(row), row, sep=": ", collapse="<br>")
+  })
+  
+  # Get edge data
+  edge_data <- get.data.frame(network, what = "edges")
+  
+  # Join edge data with vertex data to get coordinates for 'from' and 'to'
+  edge_data <- merge(edge_data, vertex_data, by.x = "from", by.y = "Id", all.x = TRUE)
+  edge_data <- merge(edge_data, vertex_data, by.x = "to", by.y = "Id", all.x = TRUE, suffixes = c(".from", ".to"))
+  
+  # Prepare data for Plotly plot
+  edges <- list(
+    x = c(rbind(edge_data$x.from, edge_data$x.to, NA)),
+    y = c(rbind(edge_data$y.from, edge_data$y.to, NA)),
+    type = "scatter",
+    mode = "lines",
+    line = list(color = "grey", width = 0.5)
+  )
+  
+  nodes <- list(
+    x = vertex_data$x,
+    y = vertex_data$y,
+    hovertext = vertex_data$hoverinfo,
+    mode = "markers",
+    marker = list(size = vertex_data$degree * 2,
+                  color = mycomcols[cluster$membership]),
+    type = "scatter",
+    hoverinfo = "text"
+  )
+  
+  # Create the plot
+  plot_ly() %>%
+    add_trace(x = edges$x, y = edges$y, mode = edges$mode, type = edges$type, line = edges$line) %>%
+    add_trace(x = nodes$x, y = nodes$y, hovertext = nodes$hovertext, mode = nodes$mode, type = nodes$type, hoverinfo = "text", marker = nodes$marker) %>%
+    layout(
+      title = paste("Network Visualization of", main_title),
+      xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+      yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
+      hovermode = 'closest'
     )
+}
 ```
 
 
 
 
+* Music Group:
+```{r}
+# Music group
+plot_product_community("Music", "Music Products")
+```
 
-* Book:
+
+* Book Group:
+
+```{r}
+# Book group
+plot_product_community("Book", "Book Products")
+```
+
+
+* Video Group:
 
 
 ```{r}
-# book
-set.seed(194)
-
-# randomly select 1 node from book group
-book.random = sample(V(amz)[V(amz)$group == "Book"], 1)
-
-# apply function to get 200 related nodes
-book.nodes = retrieve_connected_nodes(amz, book.random)
-
-book.network <- induced_subgraph(amz, book.nodes)
-
-# plot
-# Choose a layout that spreads out the nodes more effectively
-layout <- layout_with_fr(book.network)
-
-# Set graph margins to zero
-par(mar = c(0, 0, 2, 0))
-
-# Plot the graph with improved layout and adjusted aesthetics
-plot(book.network, layout = layout,
-     # Vertex properties
-     vertex.color = "#88398A",             # Deep purple color for vertices
-     vertex.frame.color = "#FFFFFF",       # White border for vertices for better visibility
-     vertex.size = 5,                      # Smaller vertex size to avoid overlap
-     vertex.label = V(book.network)$name, # Ensure labels are set to product IDs or similar
-     vertex.label.dist = 1,                # Distance of labels from vertices
-     vertex.label.cex = 0.8,               # Adjust label size for readability
-     vertex.label.color = "black",         # Change label color to black for contrast
-     vertex.label.font = 2,                # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                # Lighter color for edges
-     edge.width = 0.2,                     # Thinner edges
-     edge.arrow.size = 0.1,                # Smaller arrows if directed
-
-     # General plot settings
-     main = "Book Products Base Plot", # Add a title if appropriate
-     bg = "white" # Background color
-)
-
-
-
-# Color nodes based on a community detection algorithm to show clusters
-book.cluster <- cluster_optimal(book.network)
-mycomcols <- c("black", "#D3D3D3", "#88398A")
-
-
-# Plot the graph with advanced layout and adjusted aesthetics
-plot(book.network, layout = layout,
-     # Vertex properties
-     vertex.color = mycomcols[book.cluster$membership],        # Color vertices by community
-     vertex.frame.color = "#FFFFFF",               # White border for vertices for better visibility
-     vertex.size = sqrt(degree(book.network)) * 2, # Scale size by square root of degree
-     vertex.label = V(book.network)$name,         # Labels are set to product IDs
-     vertex.label.dist = 1,                        # Distance of labels from vertices
-     vertex.label.cex = 0.6,                       # Adjust label size for readability
-     vertex.label.color = "black",                 # Label color for contrast
-     vertex.label.font = 2,                        # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                        # Lighter color for edges
-     edge.width = 0.2,                             # Thinner edges
-     edge.arrow.size = 0.1,                        # Smaller arrows if directed
-
-     # General plot settings
-     main = "Book Products Community", # Add a title
-     bg = "white" # Background color
-)
-
-
-# Get vertex data including the degree for size scaling
-vertex_data <- data.frame(
-  Id = V(book.network)$name,
-  x = layout[, 1],
-  y = layout[, 2],
-  degree = degree(book.network),
-  Title = V(book.network)$title,
-  Group = V(book.network)$group,
-  Category = V(book.network)$sub
-)
-
-# Enhance hover info by including all attributes except x, y coordinates
-vertex_data$hoverinfo <- apply(vertex_data[, -c(2, 3)], 1, function(row) {
-  paste(names(row), row, sep=": ", collapse="<br>")
-})
-
-# Get edge data
-edge_data <- get.data.frame(book.network, what = "edges")
-
-# Join edge data with vertex data to get coordinates for 'from' and 'to'
-edge_data <- merge(edge_data, vertex_data, by.x = "from", by.y = "Id", all.x = TRUE)
-edge_data <- merge(edge_data, vertex_data, by.x = "to", by.y = "Id", all.x = TRUE, suffixes = c(".from", ".to"))
-
-# Prepare data for Plotly plot
-edges <- list(
-  x = c(rbind(edge_data$x.from, edge_data$x.to, NA)),
-  y = c(rbind(edge_data$y.from, edge_data$y.to, NA)),
-  type = "scatter",
-  mode = "lines",
-  line = list(color = "grey", width = 0.5)
-)
-
-nodes <- list(
-  x = vertex_data$x,
-  y = vertex_data$y,
-  hovertext = vertex_data$hoverinfo,
-  mode = "markers",  # Only markers, no text
-  marker = list(size = vertex_data$degree * 2,
-                color = mycomcols[book.cluster$membership]),
-  type = "scatter",
-  hoverinfo = "text"
-)
-
-# Create the plot
-plot_ly() %>%
-  add_trace(x = edges$x, y = edges$y, mode = edges$mode, type = edges$type, line = edges$line) %>%
-  add_trace(x = nodes$x, y = nodes$y, hovertext = nodes$hovertext, mode = nodes$mode, type = nodes$type, hoverinfo = "text", marker = nodes$marker) %>%
-  layout(
-    title = "Network Visualization of Book Products",
-    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    hovermode = 'closest'
-    )
+# Video group
+plot_product_community("Video", "Video Products")
 ```
 
 
 
-* Video:
-
-
-```{r}
-# video
-set.seed(194)
-
-# randomly select 1 node from video group
-video.random = sample(V(amz)[V(amz)$group == "Video"], 1)
-
-# apply function to get 200 related nodes
-video.nodes = retrieve_connected_nodes(amz, video.random)
-
-video.network <- induced_subgraph(amz, video.nodes)
-
-# plot
-# Choose a layout that spreads out the nodes more effectively
-layout <- layout_with_fr(video.network)
-
-# Set graph margins to zero
-par(mar = c(0, 0, 2, 0))
-
-# Plot the graph with improved layout and adjusted aesthetics
-plot(video.network, layout = layout,
-     # Vertex properties
-     vertex.color = "#88398A",             # Deep purple color for vertices
-     vertex.frame.color = "#FFFFFF",       # White border for vertices for better visibility
-     vertex.size = 5,                      # Smaller vertex size to avoid overlap
-     vertex.label = V(video.network)$name, # Ensure labels are set to product IDs or similar
-     vertex.label.dist = 1,                # Distance of labels from vertices
-     vertex.label.cex = 0.8,               # Adjust label size for readability
-     vertex.label.color = "black",         # Change label color to black for contrast
-     vertex.label.font = 2,                # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                # Lighter color for edges
-     edge.width = 0.2,                     # Thinner edges
-     edge.arrow.size = 0.1,                # Smaller arrows if directed
-
-     # General plot settings
-     main = "Video Products Base Plot", # Add a title if appropriate
-     bg = "white" # Background color
-)
-
-
-
-# Color nodes based on a community detection algorithm to show clusters
-video.cluster <- cluster_optimal(video.network)
-mycomcols <- c("black", "#D3D3D3", "#88398A")
-
-
-# Plot the graph with advanced layout and adjusted aesthetics
-plot(video.network, layout = layout,
-     # Vertex properties
-     vertex.color = mycomcols[video.cluster$membership],        # Color vertices by community
-     vertex.frame.color = "#FFFFFF",               # White border for vertices for better visibility
-     vertex.size = sqrt(degree(video.network)) * 2, # Scale size by square root of degree
-     vertex.label = V(video.network)$name,         # Labels are set to product IDs
-     vertex.label.dist = 1,                        # Distance of labels from vertices
-     vertex.label.cex = 0.6,                       # Adjust label size for readability
-     vertex.label.color = "black",                 # Label color for contrast
-     vertex.label.font = 2,                        # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                        # Lighter color for edges
-     edge.width = 0.2,                             # Thinner edges
-     edge.arrow.size = 0.1,                        # Smaller arrows if directed
-
-     # General plot settings
-     main = "Video Products Community", # Add a title
-     bg = "white" # Background color
-)
-
-
-# Get vertex data including the degree for size scaling
-vertex_data <- data.frame(
-  Id = V(video.network)$name,
-  x = layout[, 1],
-  y = layout[, 2],
-  degree = degree(video.network),
-  Title = V(video.network)$title,
-  Group = V(video.network)$group,
-  Category = V(video.network)$sub
-)
-
-# Enhance hover info by including all attributes except x, y coordinates
-vertex_data$hoverinfo <- apply(vertex_data[, -c(2, 3)], 1, function(row) {
-  paste(names(row), row, sep=": ", collapse="<br>")
-})
-
-# Get edge data
-edge_data <- get.data.frame(video.network, what = "edges")
-
-# Join edge data with vertex data to get coordinates for 'from' and 'to'
-edge_data <- merge(edge_data, vertex_data, by.x = "from", by.y = "Id", all.x = TRUE)
-edge_data <- merge(edge_data, vertex_data, by.x = "to", by.y = "Id", all.x = TRUE, suffixes = c(".from", ".to"))
-
-# Prepare data for Plotly plot
-edges <- list(
-  x = c(rbind(edge_data$x.from, edge_data$x.to, NA)),
-  y = c(rbind(edge_data$y.from, edge_data$y.to, NA)),
-  type = "scatter",
-  mode = "lines",
-  line = list(color = "grey", width = 0.5)
-)
-
-nodes <- list(
-  x = vertex_data$x,
-  y = vertex_data$y,
-  hovertext = vertex_data$hoverinfo,
-  mode = "markers",  # Only markers, no text
-  marker = list(size = vertex_data$degree * 2,
-                color = mycomcols[video.cluster$membership]),
-  type = "scatter",
-  hoverinfo = "text"
-)
-
-# Create the plot
-plot_ly() %>%
-  add_trace(x = edges$x, y = edges$y, mode = edges$mode, type = edges$type, line = edges$line) %>%
-  add_trace(x = nodes$x, y = nodes$y, hovertext = nodes$hovertext, mode = nodes$mode, type = nodes$type, hoverinfo = "text", marker = nodes$marker) %>%
-  layout(
-    title = "Network Visualization of Video Products",
-    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    hovermode = 'closest'
-    )
-```
-
-
-* DVD:
-
+* DVD Group:
 
 ```{r}
-# dvd
-set.seed(194)
-
-# randomly select 1 node from music group
-dvd.random = sample(V(amz)[V(amz)$group == "DVD"], 1)
-
-# apply function to get 200 related nodes
-dvd.nodes = retrieve_connected_nodes(amz, dvd.random)
-
-dvd.network <- induced_subgraph(amz, dvd.nodes)
-
-# plot
-# Choose a layout that spreads out the nodes more effectively
-layout <- layout_with_fr(dvd.network)
-
-# Set graph margins to zero
-par(mar = c(0, 0, 2, 0))
-
-# Plot the graph with improved layout and adjusted aesthetics
-plot(dvd.network, layout = layout,
-     # Vertex properties
-     vertex.color = "#88398A",             # Deep purple color for vertices
-     vertex.frame.color = "#FFFFFF",       # White border for vertices for better visibility
-     vertex.size = 5,                      # Smaller vertex size to avoid overlap
-     vertex.label = V(dvd.network)$name, # Ensure labels are set to product IDs or similar
-     vertex.label.dist = 1,                # Distance of labels from vertices
-     vertex.label.cex = 0.8,               # Adjust label size for readability
-     vertex.label.color = "black",         # Change label color to black for contrast
-     vertex.label.font = 2,                # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                # Lighter color for edges
-     edge.width = 0.2,                     # Thinner edges
-     edge.arrow.size = 0.1,                # Smaller arrows if directed
-
-     # General plot settings
-     main = "DVD Products Base Plot", # Add a title if appropriate
-     bg = "white" # Background color
-)
-
-
-
-# Color nodes based on a community detection algorithm to show clusters
-dvd.cluster <- cluster_optimal(dvd.network)
-mycomcols <- c("black", "#D3D3D3", "#88398A")
-
-
-# Plot the graph with advanced layout and adjusted aesthetics
-plot(dvd.network, layout = layout,
-     # Vertex properties
-     vertex.color = mycomcols[dvd.cluster$membership],        # Color vertices by community
-     vertex.frame.color = "#FFFFFF",               # White border for vertices for better visibility
-     vertex.size = sqrt(degree(dvd.network)) * 2, # Scale size by square root of degree
-     vertex.label = V(dvd.network)$name,         # Labels are set to product IDs
-     vertex.label.dist = 1,                        # Distance of labels from vertices
-     vertex.label.cex = 0.6,                       # Adjust label size for readability
-     vertex.label.color = "black",                 # Label color for contrast
-     vertex.label.font = 2,                        # Bold labels
-
-     # Edge properties
-     edge.color = "gray50",                        # Lighter color for edges
-     edge.width = 0.2,                             # Thinner edges
-     edge.arrow.size = 0.1,                        # Smaller arrows if directed
-
-     # General plot settings
-     main = "DVD Products Community", # Add a title
-     bg = "white" # Background color
-)
-
-
-# Get vertex data including the degree for size scaling
-vertex_data <- data.frame(
-  Id = V(dvd.network)$name,
-  x = layout[, 1],
-  y = layout[, 2],
-  degree = degree(dvd.network),
-  Title = V(dvd.network)$title,
-  Group = V(dvd.network)$group,
-  Category = V(dvd.network)$sub
-)
-
-# Enhance hover info by including all attributes except x, y coordinates
-vertex_data$hoverinfo <- apply(vertex_data[, -c(2, 3)], 1, function(row) {
-  paste(names(row), row, sep=": ", collapse="<br>")
-})
-
-# Get edge data
-edge_data <- get.data.frame(dvd.network, what = "edges")
-
-# Join edge data with vertex data to get coordinates for 'from' and 'to'
-edge_data <- merge(edge_data, vertex_data, by.x = "from", by.y = "Id", all.x = TRUE)
-edge_data <- merge(edge_data, vertex_data, by.x = "to", by.y = "Id", all.x = TRUE, suffixes = c(".from", ".to"))
-
-# Prepare data for Plotly plot
-edges <- list(
-  x = c(rbind(edge_data$x.from, edge_data$x.to, NA)),
-  y = c(rbind(edge_data$y.from, edge_data$y.to, NA)),
-  type = "scatter",
-  mode = "lines",
-  line = list(color = "grey", width = 0.5)
-)
-
-nodes <- list(
-  x = vertex_data$x,
-  y = vertex_data$y,
-  hovertext = vertex_data$hoverinfo,
-  mode = "markers",  # Only markers, no text
-  marker = list(size = vertex_data$degree * 2,
-                color = mycomcols[dvd.cluster$membership]),
-  type = "scatter",
-  hoverinfo = "text"
-)
-
-# Create the plot
-plot_ly() %>%
-  add_trace(x = edges$x, y = edges$y, mode = edges$mode, type = edges$type, line = edges$line) %>%
-  add_trace(x = nodes$x, y = nodes$y, hovertext = nodes$hovertext, mode = nodes$mode, type = nodes$type, hoverinfo = "text", marker = nodes$marker) %>%
-  layout(
-    title = "Network Visualization of DVD Products",
-    xaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    yaxis = list(showgrid = FALSE, zeroline = FALSE, showticklabels = FALSE),
-    hovermode = 'closest'
-    )
+# DVD group
+plot_product_community("DVD", "DVD Products")
 ```
-
 
 
 ```{r}
 ## post to public for presentation
 # Sys.setenv("plotly_username" = "mniu")
-# Sys.setenv("plotly_api_key" = "hjVylOWj5bsEor6pcanT")
+# Sys.setenv("plotly_api_key" = "")
 # response <- api_create(music, filename = "music_products",
 #                        world_readable = TRUE, fileopt = "new")
 # 
