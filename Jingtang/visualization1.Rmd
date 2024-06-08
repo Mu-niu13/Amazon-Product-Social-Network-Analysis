@@ -2,7 +2,7 @@
 title: 'PSTAT 194CS Final Project'
 author: "Kai Wa Ho, Jingtang, Mu Niu"
 date: "2024-06-03"
-output: html_document
+output: pdf_document
 ---
 
 
@@ -602,7 +602,7 @@ plot_ly() %>%
 
 ## 4. Analyze Network Metrics
 ***Music***
-```{r}
+  ```{r}
 # Network Metrics
 # Density
 network_density <- edge_density(music.network)
@@ -644,7 +644,7 @@ cat("Edge Betweenness:\n")
 print(summary(edge_betweenness))
 ```
 ***Network Density: 0.2367816***        
-The density of the network is approximately 0.237, which means that about 23.7% of all possible edges between nodes are present. This indicates a moderately connected network, suggesting that a fair number of music products are frequently co-purchased or associated with each other, but there is still a significant proportion that are not directly connected.
+  The density of the network is approximately 0.237, which means that about 23.7% of all possible edges between nodes are present. This indicates a moderately connected network, suggesting that a fair number of music products are frequently co-purchased or associated with each other, but there is still a significant proportion that are not directly connected.
 
 ***Average Path Length: 1.889655***       
   The average number of steps along the shortest paths for all possible pairs of nodes is about 1.89. This relatively short path length implies that, on average, any two music products in this network are separated by less than two steps, indicating that products are closely related and often co-purchased.
@@ -814,50 +814,8 @@ Edge betweenness values range from 1 to 168, with a mean of 7.72. High edge betw
 ***Summary***
 The video network is moderately dense with a low average path length and diameter, indicating a compact structure where information can spread quickly. The degree distribution shows most nodes have a similar number of connections, while betweenness and eigenvector centralities highlight the presence of key nodes and edges that play crucial roles in network connectivity and influence. The metrics collectively suggest a well-connected network with certain nodes and edges being particularly significant for maintaining overall connectivity and efficiency.
 
-***DVDs***
-```{r}
-# Network Metrics
-# Density
-network_density <- edge_density(dvd.network)
-cat("Network Density:", network_density, "\n")
-
-# Average Path Length
-avg_path_length <- average.path.length(dvd.network, directed = FALSE)
-cat("Average Path Length:", avg_path_length, "\n")
-
-# Diameter
-network_diameter <- diameter(dvd.network, directed = FALSE)
-cat("Network Diameter:", network_diameter, "\n")
-
-# Node Metrics
-# Degree
-node_degree <- degree(dvd.network)
-cat("Node Degree:\n")
-print(summary(node_degree))
-
-# Betweenness Centrality
-node_betweenness <- betweenness(dvd.network)
-cat("Node Betweenness Centrality:\n")
-print(summary(node_betweenness))
-
-# Closeness Centrality
-node_closeness <- closeness(dvd.network)
-cat("Node Closeness Centrality:\n")
-print(summary(node_closeness))
-
-# Eigenvector Centrality
-node_eigenvector <- evcent(dvd.network)$vector
-cat("Node Eigenvector Centrality:\n")
-print(summary(node_eigenvector))
-
-# Edge Metrics
-# Edge Betweenness
-edge_betweenness <- edge.betweenness(dvd.network)
-cat("Edge Betweenness:\n")
-print(summary(edge_betweenness))
 
 
-```
 
 
 ## 5. Community Detection
@@ -881,6 +839,7 @@ print(membership(infomap_communities))
 cat("Modularity:", modularity(infomap_communities), "\n")
 
 # Visualize communities 
+par(mfrow=c(1,3))
 plot(walktrap_communities, music.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 plot(infomap_communities, music.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 ```
@@ -922,6 +881,7 @@ print(membership(infomap_communities))
 cat("Modularity:", modularity(infomap_communities), "\n")
 
 # Visualize communities
+par(mfrow=c(1,2))
 plot(walktrap_communities, book.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 plot(infomap_communities, book.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 ```
@@ -969,11 +929,11 @@ print(membership(infomap_communities))
 cat("Modularity:", modularity(infomap_communities), "\n")
 
 # Visualize communities 
+par(mfrow=c(1,3))
 plot(walktrap_communities, video.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 plot(infomap_communities, video.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
 
 ```
-
 ***Walktrap Algorithm***
 ***Communities Detected:***
 Community 1: Nodes - 49943, 49947, 49948, 59813, 65817, 76252, 87725, 101895, 109489, 114378, 151468, 154328, 183012, 229284, 324495, 372824        
@@ -1000,34 +960,14 @@ This algorithm identifies three communities, splitting some of the nodes from th
 Infomap Algorithm identifies more, smaller communities with a slightly lower modularity score. This indicates a more detailed division of the network, capturing finer community structures. Useful for a more nuanced understanding of the network's community structure.    
 
 
-***DVD***       
-```{r}
-# Community Detection for DVD Network
-
-# Walktrap Algorithm
-walktrap_communities_dvd <- cluster_walktrap(dvd.network)
-cat("Walktrap Algorithm:\n")
-print(membership(walktrap_communities_dvd))
-cat("Modularity:", modularity(walktrap_communities_dvd), "\n")
-
-# Infomap Algorithm
-infomap_communities_dvd <- cluster_infomap(dvd.network)
-cat("Infomap Algorithm:\n")
-print(membership(infomap_communities_dvd))
-cat("Modularity:", modularity(infomap_communities_dvd), "\n")
-
-# Visualize communities
-plot(walktrap_communities_dvd, dvd.network, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
-plot(infomap_communities_dvd, dvd.network, main="Infomap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
-
-
-```
 
 
 
 ## Adjacency matrix and Reording metrics
 
 ### Music
+
+
 
 #### Original matrix
 
@@ -1036,25 +976,28 @@ plot(infomap_communities_dvd, dvd.network, main="Infomap Algorithm", vertex.size
 # Create the adjacency matrix
 adj_matrix <- as_adjacency_matrix(music.network, sparse = FALSE)
 
+# Transpose the adjacency matrix to swap rows and columns
+adj_matrix_transposed <- t(adj_matrix)
+
 # Set up the plot with customizations
 par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
 
-# Visualize the adjacency matrix with gridlines and node labels
-image(1:nrow(adj_matrix), 1:ncol(adj_matrix), adj_matrix, 
+# Visualize the transposed adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix_transposed), 1:ncol(adj_matrix_transposed), adj_matrix_transposed, 
       main = "Adjacency Matrix For Music", 
       xlab = "Nodes", ylab = "Nodes", 
       axes = FALSE, col = c("white", "black"))
 
+# Add gridlines
+grid(nx = nrow(adj_matrix_transposed), ny = ncol(adj_matrix_transposed), col = "gray", lty = "dotted")
 
+# Add axis labels with the correct node names
+axis(1, at = 1:nrow(adj_matrix_transposed), labels = rownames(adj_matrix_transposed), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix_transposed), labels = colnames(adj_matrix_transposed), las = 2, cex.axis = 0.7, tick = FALSE)
 
-# Add axis labels
-axis(1, at = 1:nrow(adj_matrix), labels = rownames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
-axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axis = 0.7, tick = FALSE)
 
 ```
 
-
-### Structure of the Matrix:
 
 1. **Nodes**:
    - The nodes are listed on both the rows and columns, suggesting a square matrix. Each unique node is represented by a unique identifier (e.g., 219045, 239470, etc.).
@@ -1063,7 +1006,7 @@ axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axi
    - Each cell in the matrix represents the connection between the node corresponding to its row and the node corresponding to its column.
    - A black cell indicates a connection between the two nodes, while an absence of a black cell (white space) indicates no connection.
 
-### Analysis of the Matrix:
+Analysis of the Matrix:
 
 1. **Diagonal**:
    - The matrix does not show any self-loops, as indicated by the absence of black cells along the diagonal. This means no node is connected to itself, which is typical in many social network representations.
@@ -1081,7 +1024,7 @@ axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axi
 5. **Clusters**:
    - The dense blocks of connections may represent subgroups within the music network. These could be groups of musicians, genres, or communities that are more interconnected.
 
-### Practical Implications:
+Practical Implications:
 
 - **Community Detection**:
   - The dense clusters can be investigated further to identify communities or groups that have a high level of interaction.
@@ -1124,9 +1067,31 @@ axis(2, at = 1:ncol(adj_matrix_reordered), labels = colnames(adj_matrix_reordere
 ```
 
 ##### based on community
-Since we can not directly apply the fast greedy alogorithm we learned to our directed network, I decided to test different alogrithms, by applying the walktrap alogrithm to our original network, meanwhile change the original network into an undirected one then apply the fast greedy method to see which one has higher modularity and how different are the communities and reordered matrices. 
+Since the fast greedy algorithm we learned cannot be directly applied to our directed network, I opted to experiment with various algorithms. I applied the walktrap algorithm to our original network and simultaneously converted the original network into an undirected one. Then, I employed the fast greedy method to the undirected version. Additionally, I also considered the optimal community detection alogrithm that we used previously. Finally,I compare their modularity scores and observe differences in communities and reordered matrices. 
 
 ###### directed
+
+**Optimal**
+
+```{r}
+modularity_value <- modularity(music.cluster)
+modularity_value
+
+membership <- membership(music.cluster)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(music.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(t(ordered_adjacency_matrix), main="Reordered Adjacency Matrix for Music Network(Optimal)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+
+**Walktrap**
+
 ```{r}
 # Detect communities
 communities <- cluster_walktrap(music.network)
@@ -1151,7 +1116,7 @@ ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(music.network))[ordered_indices, ordered_indices]
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Music Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(t(ordered_adjacency_matrix), main="Reordered Adjacency Matrix for Music Network(Walktrap)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
 
@@ -1184,10 +1149,10 @@ community_list
 
 # Reorder nodes based on community membership
 ordered_indices <- order(membership)
-ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_music_network))[ordered_indices, ordered_indices]
+ordered_adjacency_matrix <- t(as.matrix(get.adjacency(undirected_music_network))[ordered_indices, ordered_indices])
 
 # Plot reordered adjacency matrix with community colors
-image(1:nrow(ordered_adjacency_matrix), 1:ncol(ordered_adjacency_matrix), ordered_adjacency_matrix, col=c("white", "black"), main="Reordered Adjacency Matrix Based on Community", axes=FALSE, )
+image(1:nrow((ordered_adjacency_matrix)), 1:ncol(ordered_adjacency_matrix), ordered_adjacency_matrix, col=c("white", "black"), main="Reordered Adjacency Matrix for Music Network(Fastgreedy)", axes=FALSE, )
 axis(1, at=1:nrow(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
 axis(2, at=1:ncol(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
 ```
@@ -1289,7 +1254,7 @@ ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices]
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Music Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Book Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
 
@@ -1422,7 +1387,7 @@ ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(video.network))[ordered_indices, ordered_indices]
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Music Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Video Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(video.network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(video.network)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
@@ -1557,7 +1522,7 @@ ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(dvd.network))[ordered_indices, ordered_indices]
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Music Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for DVD Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
