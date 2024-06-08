@@ -965,9 +965,44 @@ Infomap Algorithm identifies more, smaller communities with a slightly lower mod
 
 ## Adjacency matrix and Reording metrics
 
+### Combined network
+
+```{r}
+edges_list_F <- as_edgelist(a, names = TRUE)
+
+
+igraph_network_F <- graph.edgelist(edges_list_F, directed = TRUE)
+
+network.adjacency_F <- as_adj(igraph_network_F)
+
+network.adjacency_F
+
+image(Matrix(network.adjacency_F))
+```
+
+#### Reordered
+
+```{r}
+com <- cluster_walktrap(a)
+plot(com, a, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+
+# Get the membership vector
+mem <- membership(com)
+
+# List the members of each community
+community_list <- split(V(a)$name, mem)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(mem)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(a))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
 ### Music
-
-
 
 #### Original matrix
 
@@ -1168,7 +1203,7 @@ image(Matrix(network.adjacency_B))
 
 ```{r}
 # Create the adjacency matrix
-adj_matrix <- as_adjacency_matrix(book.network, sparse = FALSE)
+adj_matrix <- t(as_adjacency_matrix(book.network, sparse = FALSE))
 
 # Set up the plot with customizations
 par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
@@ -1222,6 +1257,23 @@ axis(2, at = 1:ncol(adj_matrix_reordered), labels = colnames(adj_matrix_reordere
 ###### directed
 
 ```{r}
+modularity_value <- modularity(book.cluster)
+modularity_value
+
+membership <- membership(book.cluster)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- t(as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices])
+
+# Plot the reordered adjacency matrix
+image(t(ordered_adjacency_matrix), main="Reordered Adjacency Matrix for Book(optimal)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+```
+
+
+```{r}
 # Detect communities
 communities <- cluster_walktrap(book.network)
 
@@ -1242,10 +1294,10 @@ community_list
 
 # Reorder the nodes based on community membership
 ordered_indices <- order(membership)
-ordered_adjacency_matrix <- as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices]
+ordered_adjacency_matrix <- t(as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices])
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for Book Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for Book(walktrap)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
 
@@ -1277,10 +1329,10 @@ community_list
 
 # Reorder the nodes based on community membership
 ordered_indices <- order(membership)
-ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_book_network))[ordered_indices, ordered_indices]
+ordered_adjacency_matrix <- t(as.matrix(get.adjacency(undirected_book_network))[ordered_indices, ordered_indices])
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for Book(fastgreedy)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_book_network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_book_network)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
@@ -1411,7 +1463,7 @@ ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_video_network))[ordered_indices, ordered_indices]
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for Video(Fastgreedy)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_video_network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_video_network)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
@@ -1513,7 +1565,7 @@ ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(dvd.network))[ordered_indices, ordered_indices]
 
 # Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix Based on Community for DVD Network", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for DVD(walktrap)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
@@ -1551,36 +1603,5 @@ axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_dv
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_dvd_network)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
 
-```{r}
-edges_list_F <- as_edgelist(a, names = TRUE)
 
-
-igraph_network_F <- graph.edgelist(edges_list_F, directed = TRUE)
-
-network.adjacency_F <- as_adj(igraph_network_F)
-
-network.adjacency_F
-
-image(Matrix(network.adjacency_F))
-```
-
-```{r}
-com <- cluster_walktrap(a)
-plot(com, a, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
-
-# Get the membership vector
-mem <- membership(com)
-
-# List the members of each community
-community_list <- split(V(a)$name, mem)
-
-# Reorder the nodes based on community membership
-ordered_indices <- order(mem)
-ordered_adjacency_matrix <- as.matrix(get.adjacency(a))[ordered_indices, ordered_indices]
-
-# Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
-axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
-axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
-```
 
