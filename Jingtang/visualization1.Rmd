@@ -1053,6 +1053,47 @@ axis(2, at = 1:ncol(adj_matrix), labels = colnames(adj_matrix), las = 2, cex.axi
 
 ```
 
+
+### Structure of the Matrix:
+
+1. **Nodes**:
+   - The nodes are listed on both the rows and columns, suggesting a square matrix. Each unique node is represented by a unique identifier (e.g., 219045, 239470, etc.).
+
+2. **Connections**:
+   - Each cell in the matrix represents the connection between the node corresponding to its row and the node corresponding to its column.
+   - A black cell indicates a connection between the two nodes, while an absence of a black cell (white space) indicates no connection.
+
+### Analysis of the Matrix:
+
+1. **Diagonal**:
+   - The matrix does not show any self-loops, as indicated by the absence of black cells along the diagonal. This means no node is connected to itself, which is typical in many social network representations.
+
+2. **Symmetry**:
+   - The matrix appears to be asymmetric, which suggests that the network might be directed. This means that if node A is connected to node B, it doesn’t necessarily imply that node B is connected back to node A.
+
+3. **Density**:
+   - The density of connections varies throughout the matrix. There are clusters of densely connected nodes, which could indicate groups or communities within the music network.
+   - For example, the lower left corner and the central part of the matrix show more dense connections, suggesting closely-knit groups of nodes.
+
+4. **Isolated Nodes**:
+   - Some nodes have fewer connections, shown by fewer black cells in their corresponding rows and columns. These could represent individuals or entities that are less connected within the network.
+
+5. **Clusters**:
+   - The dense blocks of connections may represent subgroups within the music network. These could be groups of musicians, genres, or communities that are more interconnected.
+
+### Practical Implications:
+
+- **Community Detection**:
+  - The dense clusters can be investigated further to identify communities or groups that have a high level of interaction.
+
+- **Central Nodes**:
+  - Nodes with many connections (rows and columns with many black cells) can be considered central or influential within the network.
+
+- **Network Analysis**:
+  - This matrix provides a foundation for applying various network analysis techniques, such as calculating centrality measures or detecting communities, to understand the structure and dynamics of the network.
+
+In summary, this adjacency matrix offers a visual summary of the connections within a social network related to music. It highlights densely connected groups and less connected individuals, which can be crucial for understanding the network's structure and dynamics.
+
 #### Reordering
 
 ##### hierachical clustering to highlight
@@ -1554,5 +1595,37 @@ axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_dv
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_dvd_network)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
 
+```{r}
+edges_list_F <- as_edgelist(a, names = TRUE)
 
+
+igraph_network_F <- graph.edgelist(edges_list_F, directed = TRUE)
+
+network.adjacency_F <- as_adj(igraph_network_F)
+
+network.adjacency_F
+
+image(Matrix(network.adjacency_F))
+```
+
+```{r}
+com <- cluster_walktrap(a)
+plot(com, a, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+
+# Get the membership vector
+mem <- membership(com)
+
+# List the members of each community
+community_list <- split(V(a)$name, mem)
+community_list
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(mem)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(a))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
+```
 
