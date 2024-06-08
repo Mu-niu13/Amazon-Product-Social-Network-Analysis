@@ -1025,10 +1025,11 @@ plot(infomap_communities_dvd, dvd.network, main="Infomap Algorithm", vertex.size
 
 
 
+## Adjacency matrix and Reording metrics
 
+### Music
 
-
-
+#### Original matrix
 
 ```{r}
 

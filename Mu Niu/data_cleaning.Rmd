@@ -27,24 +27,6 @@ filtered_meta <- meta %>%
   filter(keep) %>%
   select(-keep)
 
-# get row index for product that has missing info
-n <- length(filtered_meta$line)
-has_id <- grepl("Id: ", filtered_meta$line)
-
-no_id_ahead <- logical(n)  # Initialize with FALSE
-for (i in 1:n) {
-  if (i + 5 <= n) {
-    no_id_ahead[i] <- !grepl("Id:", filtered_meta[i + 5, ])
-    }
-  else {
-    no_id_ahead[i] <- TRUE
-  }
-}
-
-non_valid_indices <- which(has_id & no_id_ahead)
-# fix exception: last product
-non_valid_indices <- non_valid_indices[-c(5860)]
-
 # map to df
 result <- data.frame(Id = character(),
                      Title = character(),
@@ -125,7 +107,6 @@ filtered_data = data[(data$From %in% meta$Id) & (data$To %in% meta$Id), ]
 filtered_data %>% write.csv('../data/filtered_data.csv')
 ```
 
-<<<<<<< Updated upstream:Mu Niu/data_cleaning.Rmd
 
 ```{r}
 # convert to igraph
@@ -155,12 +136,3 @@ V(amz)$sub <- sub
 saveRDS(amz, file = '../data/amz_igraph.rds')
 ```
 
-
-=======
-```{r}
-head(meta_data)
-
-left_join()
-```
-
->>>>>>> Stashed changes:Mu Niu/Mu-meta_data_cleaning.Rmd
