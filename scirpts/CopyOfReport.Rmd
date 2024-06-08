@@ -17,15 +17,19 @@ The primary objectives of this analysis are to understand the relationships betw
 
 ## Methodology
 
-We processed the raw data by cleaning and integrating nodes and edges into an igraph object. Using dplyr for data manipulation and igraph for network construction, we ensured only valid and complete data were analyzed. For our analysis, we sampled the network to create four subgraphs (Music, Book, Video, and DVD) by expanding from a randomly selected node to capture densely connected nodes, facilitating a better understanding of the relationships between products.
+In this project, we used a systematic approach to prepare, analyze, and visualize our data. Initially, we converted nodes metadata into a clean dataframe with columns for ID, Title, Group, and Category. We then removed any connections in the dataset that had missing IDs, titles, or groups, ensuring our analysis only included complete data. This cleaned data was used to create an igraph object in R, containing 398,688 nodes with 4 attributes for each product. We also employed a sampling technique where we generated four subgraphs. Starting with a randomly selected node, we expanded our sample to include all connected nodes and continued this process iteratively until we reached our target node count. This method helped us focus on densely connected groups of products, making it easier to visualize and understand their relationships.
+
 
 ## Analysis
 
 ### Description and Visualization of Subgraphs
 
-We visualized subgraphs for the Music, Book, Video, and DVD categories using tools like the Plotly package in R. These visualizations revealed dense connections and distinct clusters, reflecting co-purchasing patterns within each category. For instance, the Music subgraph showed overlapping demographics across various genres, while the Book subgraph highlighted strong links between non-fiction and history genres. Analyzing these visualizations provided insights into customer preferences and potential opportunities for cross-selling.
+After sampling four sub-networks, each formed by using our previously described sampling method and starting with nodes from the book, music, video, and DVD groups respectively, we visualized the subgraphs. This visualization was performed using the base plot and Plotly package in R to generate both static and interactive plots.
 
-In the DVD subgraph, we observed that customers who purchased comedy DVDs often bought diverse music genres, indicating broad tastes and suggesting targeted marketing strategies. These visualizations deepened our understanding of product interconnections and informed strategies to enhance product recommendations and marketing efforts.
+The visualizations revealed several interesting patterns in co-purchasing behavior. For instance, we observed that individuals who purchase education books also tend to listen to R&B, rap, and hip-hop music. This correlation might suggest a demographic overlap between students or educators and fans of these music genres. Additionally, we found that people who buy nonfiction books also favor history books, which is logical as both are grounded in factual content. Travel book enthusiasts were also seen to purchase audiobooks, likely due to the convenience of not carrying physical copies while traveling. Similarly, customers who buy children's books often buy audiobooks, possibly because audiobooks provide a convenient way for babysitters to engage children. In the DVD group, those who enjoy comedy DVDs also show a diverse taste in music, purchasing DJ music, pop, rock, and metal. An intriguing finding was that several memoir nodes were linked to R&B and DJ music, which might suggest that people prefer listening to these genres while reading memoirs. Additionally, we found that individuals interested in business and investment books also showed an interest in books on arts and photography.
+
+These visualizations enhanced our understanding of the relationships between products and allowed us to identify distinct co-purchasing patterns. The interactive plots, containing more detailed information, can be accessed **[here](https://amazon-product-sna-visualization.netlify.app/).** By analyzing these subgraphs, we gained valuable insights into customer behavior and product affinities, which can be leveraged for better marketing strategies and product recommendations.
+
 
 ### Metrics and Community Detection Results
 
@@ -54,7 +58,9 @@ Our analysis highlighted unique structural characteristics and influential nodes
 
 Community detection revealed distinct clusters reflecting underlying co-purchasing behaviors. Walktrap and Infomap identified tightly-knit communities within each network, while FastGreedy showed broader, less distinct groupings. The consistent appearance of specific clusters across algorithms indicates the stability and robustness of these networks’ structures, providing insights into product linkages through customer purchases.
 
-#### Practical Applications for Marketing Strategies:
+#### Practical Applications for Marketing Strategies
+
+
 Insights from the viral marketing study are particularly relevant for devising marketing strategies in the context of our co-purchase network analysis. The dense clusters and influential nodes identified in networks like Music and Book suggest potential for targeted marketing and product bundling. For example, leveraging the strong intra-community ties and rapid co-purchase propagation can inform effective promotional campaigns. The temporal dynamics observed, such as the short average path length in the Music network, highlight opportunities for timely and impactful product recommendations, reflecting the rapid influence spread seen in viral marketing.
 
 ### Visual and Textual Summaries
