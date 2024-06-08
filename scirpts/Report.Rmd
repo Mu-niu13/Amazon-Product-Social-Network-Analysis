@@ -1,15 +1,15 @@
 ---
 title: 'Amazon Product Co-Purchasing Network Analysis'
 author: "Mu Niu, Kai Wa Ho, Jingtang"
-date: "2024-06-06"
+date: "2024-06-07"
 output: pdf_document
 ---
 
 ## Introduction
 
-In this project, we conduct a comprehensive social network analysis on a dataset derived from Amazon's product co-purchasing records. The raw edge data, which was collected on June 1, 2003, from the Amazon website, includes 403,394 nodes representing individual products and 3,387,388 unweighted directed edges indicating frequently co-purchased product pairs. The direction of an edge signifies the order of purchase, with an outward edge from product A to product B indicating that product B is frequently purchased after product A. This dataset is available at [**Amazon Product Co-Purchasing Network**](https://snap.stanford.edu/data/amazon0601.html)**.**
+In this project, we conduct a comprehensive social network analysis on a dataset derived from Amazon's product co-purchasing records. The raw edge data, which was collected on June 1, 2003, from the Amazon website, includes 403,394 nodes representing individual products and 3,387,388 unweighted directed edges indicating frequently co-purchased product pairs. The direction of an edge signifies the order of purchase, with an outward edge from product A to product B indicating that product B is frequently purchased after product A. This dataset is available at **[Amazon Product Co-Purchasing Network](https://snap.stanford.edu/data/amazon0601.html).**
 
-Additionally, the raw nodes data was collected by crawling Amazon's website and encompasses metadata and review information for 548,552 different products, including books, music, DVDs, and video tapes. This dataset provides detailed information such as the product title, sales rank, list of similar products, detailed product categorization, and reviews. This data was collected in the summer of 2006, and it can be accessed at [**Amazon Product Metadata**](https://snap.stanford.edu/data/amazon-meta.html)**.**
+Additionally, the raw nodes data was collected by crawling Amazon's website and encompasses metadata and review information for 548,552 different products, including books, music, DVDs, and video tapes. This dataset provides detailed information such as the product title, sales rank, list of similar products, detailed product categorization, and reviews. This data was collected in the summer of 2006, and it can be accessed at **[Amazon Product Metadata](https://snap.stanford.edu/data/amazon-meta.html).**
 
 After a thorough data cleaning process, we integrated the edge data and node information data, resulting in an igraph object containing 398,688 nodes. Each node has four attributes: ID (unique product ID), Title (product name), Group (class the product belongs to), and Category (subcategory of the class).
 
@@ -17,7 +17,7 @@ The primary objectives of this analysis are to understand the relationships betw
 
 ## Methodology
 
-In this project, we followed a structured approach to process the data, analyze the network, and visualize the results.The data processing procedures began with mapping the nodes information dataset, which was a text file with issues of missing data and inconsistent formats, into a dataframe with four columns: ID, Title, Group, and Category. Subsequently, we filtered out all edges in the edge dataset that connected nodes with missing IDs, product titles, or product groups. This ensured that only valid and complete data was included in the analysis. The mapped nodes information data and filtered edge data was then integrated into an igraph object containing 398,688 nodes with four vertex attributes: ID, Title, Group, and Category. The data cleaning process employed packages such as `dplyr` for data manipulation and `igraph` for constructing and managing the igraph object in R.
+In this project, we followed a structured approach to process the data, analyze the network, and visualize the results. The data processing procedures began with mapping the nodes information dataset, which was a text file with issues of missing data and inconsistent formats, into a dataframe with four columns: ID, Title, Group, and Category. Subsequently, we filtered out all edges in the edge dataset that connected nodes with missing IDs, product titles, or product groups. This ensured that only valid and complete data was included in the analysis. The mapped nodes information data and filtered edge data was then integrated into an igraph object containing 398,688 nodes with four vertex attributes: ID, Title, Group, and Category. The data cleaning process employed packages such as `dplyr` for data manipulation and `igraph` for constructing and managing the igraph object in R.
 
 For sampling methodology, we generated 4 induced subgraphs by using a node-centric approach. For each sub-network, we randomly selected one node as the starting point and retrieved all nodes connected to it. We then iteratively expanded our sample by including nodes connected to the current set of nodes, continuing this process until the specified number of nodes was reached. This sampling method was designed to capture densely connected nodes, facilitating better visualization and understanding of the relationships between products.
 
@@ -29,19 +29,15 @@ After sampling four sub-networks, each formed by using our previously described 
 
 The visualizations revealed several interesting patterns in co-purchasing behavior. For instance, we observed that individuals who purchase education books also tend to listen to R&B, rap, and hip-hop music. This correlation might suggest a demographic overlap between students or educators and fans of these music genres. Additionally, we found that people who buy nonfiction books also favor history books, which is logical as both are grounded in factual content. Travel book enthusiasts were also seen to purchase audiobooks, likely due to the convenience of not carrying physical copies while traveling. Similarly, customers who buy children's books often buy audiobooks, possibly because audiobooks provide a convenient way for babysitters to engage children. In the DVD group, those who enjoy comedy DVDs also show a diverse taste in music, purchasing DJ music, pop, rock, and metal. An intriguing finding was that several memoir nodes were linked to R&B and DJ music, which might suggest that people prefer listening to these genres while reading memoirs. Additionally, we found that individuals interested in business and investment books also showed an interest in books on arts and photography.
 
-These visualizations enhanced our understanding of the relationships between products and allowed us to identify distinct co-purchasing patterns. The interactive plots, containing more detailed information, can be accessed [**here**](https://amazon-product-sna-visualization.netlify.app/)**.** By analyzing these subgraphs, we gained valuable insights into customer behavior and product affinities, which can be leveraged for better marketing strategies and product recommendations.
+These visualizations enhanced our understanding of the relationships between products and allowed us to identify distinct co-purchasing patterns. The interactive plots, containing more detailed information, can be accessed **[here](https://amazon-product-sna-visualization.netlify.app/).** By analyzing these subgraphs, we gained valuable insights into customer behavior and product affinities, which can be leveraged for better marketing strategies and product recommendations.
 
-### Metrics and Community Detection
+### Results
 
-### Condensed Summary:
+* Metrics and Community Detection
 
-The study of co-purchase networks offers significant insights into customer behavior, product relationships, and marketing strategies. This analysis focuses on the co-purchase networks of Music, Book, Video, and DVD categories. Each category's network structure is examined through its adjacency matrix and various metrics to understand the connectivity and influential nodes.
+The study of co-purchase networks offers significant insights into customer behavior, product relationships, and marketing strategies. This analysis focuses on the co-purchase networks of Music, Book, Video, and DVD categories. Each category's network structure is examined through various metrics to understand the connectivity and influential nodes.
 
-In the Music network, a density of 0.237 indicates moderate connectivity with frequent co-purchases. Key metrics such as average path length, degree distribution, and centrality measures (betweenness, closeness, and eigenvector) reveal a balanced network with some influential hubs and strong co-purchase relationships.
-
-The Book network shows lower density (0.137), reflecting a more dispersed structure with significant but less frequent connections. Its metrics indicate moderate connectivity and a few key nodes maintaining network cohesion.
-
-For the Video network, a density of 0.189 suggests moderate connectivity with a compact structure, characterized by average path lengths and strong, though moderately distributed, influential nodes.
+In the Music network, a density of 0.237 indicates moderate connectivity with frequent co-purchases. Key metrics such as average path length, degree distribution, and centrality measures (betweenness, closeness, and eigenvector) reveal a balanced network with some influential hubs and strong co-purchase relationships. The Book network shows lower density (0.137), reflecting a more dispersed structure with significant but less frequent connections. Its metrics indicate moderate connectivity and a few key nodes maintaining network cohesion. For the Video network, a density of 0.189 suggests moderate connectivity with a compact structure, characterized by average path lengths and strong, though moderately distributed, influential nodes.
 
 Community detection through algorithms like Walktrap, Infomap, and FastGreedy offer deeper insights into each network’s community dynamics. The Walktrap algorithm, which uses random walks, and Infomap, focusing on information flow compression, both identify smaller, tighter communities. FastGreedy, through hierarchical merging, captures broader community structures with slightly less sharp boundaries.
 
@@ -49,7 +45,7 @@ Each algorithm highlights how products are grouped and connected within the netw
 
 Overall, these analyses not only map out the internal dynamics of product co-purchase networks but also provide actionable insights for optimizing product recommendations and marketing strategies.
 
-### Adjacency Matrix&Reordering Nodes
+* Adjacency Matrix&Reordering Nodes
 
 An adjacency matrix is an essential tool for visualizing and analyzing relationships in social networks. Due to report length constraints, I will first examine the original and reordered matrices of the combined network, which integrates four distinct networks. Then, focusing on the music network as a representative.
 
@@ -75,9 +71,9 @@ Our analysis of the Amazon product co-purchasing network provides valuable insig
 
 ### Dataset:
 
--   [**Amazon Product Co-Purchasing Network**](https://snap.stanford.edu/data/amazon0601.html)**:** The edge dataset representing products and their co-purchasing patterns on Amazon.
+-   **[Amazon Product Co-Purchasing Network](https://snap.stanford.edu/data/amazon0601.html)**: The edge dataset representing products and their co-purchasing patterns on Amazon.
 
--   [**Amazon Product Metadata**](https://snap.stanford.edu/data/amazon-meta.html)**:** Metadata for products listed in the Amazon Product Co-Purchasing Network.
+-   **[Amazon Product Metadata](https://snap.stanford.edu/data/amazon-meta.html)**:Metadata for products listed in the Amazon Product Co-Purchasing Network.
 
 ### Academic Reference:
 
@@ -85,9 +81,7 @@ Our analysis of the Amazon product co-purchasing network provides valuable insig
 
 ### Further Elaboration:
 
-<https://docs.google.com/document/d/13haJthH50zWkUDmupgW31NK3xq_aHxab41QQLrzKcTQ/edit>
-
-Since we do not have enough space in this report, further analysis and interpretation can be accessed via this link.
+Since we do not have enough space in this report, further analysis and interpretation can be accessed via this **[link](https://docs.google.com/document/d/13haJthH50zWkUDmupgW31NK3xq_aHxab41QQLrzKcTQ/edit)**
 
 ### Acknowledgments:
 
@@ -95,7 +89,7 @@ We extend our heartfelt thanks to Isaiah Katz and Dr. Uma Ravat. Their assistanc
 
 ## Appendices
 
--   Figures
+* Figures and Printed Result
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # library
@@ -141,6 +135,7 @@ retrieve_connected_nodes <- function(graph, start_node, count = 30) {
 }
 
 amz <- readRDS(file = '../data/amz_igraph.rds')
+
 # Function to generate and plot the community for a given product group
 plot_product_community <- function(group_name, main_title) {
   # Randomly select one node from the specified group
@@ -200,37 +195,198 @@ plot_product_community("Video", "Video Products Community")
 plot_product_community("DVD", "DVD Products Community")
 ```
 
-Music
+**Music**
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXesONswct9tFSOH6oOdFKIMoGnyUnGckYCNFPEpcqF9hK6ekUv5Y6_tfuz8mV4EGNWVAwUwY6vciG-jG4MzGxlraVLoT7fW95s7uECSLxbMftMbK7kofPjtsu_DIvnX0RmubGtMRyF8kIjdxzaJrm1IUfI?key=h0K1bMW7BkU587zlvlBCtw)
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+set.seed(194)
+random.music <- sample(V(amz)[V(amz)$group == 'Music'], 1)
+music.nodes <- retrieve_connected_nodes(amz, random.music)
+music.network <- induced_subgraph(amz, music.nodes)
 
-Book
+network_density <- edge_density(music.network)
+cat("Network Density:", network_density, "\n")
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc2mQS1hMogVBgcRsimXvnm5HyjKObbh0b6iAImCZSMI3OzB2xZeAGQK8916qcT9q6Pp9_2kwSO1Shr4WwOXxrmLfAQ2TqgFgJG_9u-H3kwhhiglvLuFfRfoZoRPW9lqetuwSd6b32h0StDNaf03tCB5xmu?key=h0K1bMW7BkU587zlvlBCtw)
+# Average Path Length
+avg_path_length <- average.path.length(music.network, directed = FALSE)
+cat("Average Path Length:", avg_path_length, "\n")
 
-Video
+# Diameter
+network_diameter <- diameter(music.network, directed = FALSE)
+cat("Network Diameter:", network_diameter, "\n")
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc0cirA6bxIPKbRBjoY2hbl5J73YZoEf9rlqpuJhvP1FjEM8e722ixP4MbDrIHwkI1zuP3tfpy9saR8kU_204hsusP3ynAG6qVPTUYvib3uO-c_pnIP1Vv3zcMMp5y6_P0Wurs2plwi0_mQMlHIbIh-UmGN?key=h0K1bMW7BkU587zlvlBCtw)
+# Node Metrics
+# Degree
+node_degree <- degree(music.network)
+cat("Node Degree:\n")
+print(summary(node_degree))
 
-DVD
+# Betweenness Centrality
+node_betweenness <- betweenness(music.network)
+cat("Node Betweenness Centrality:\n")
+print(summary(node_betweenness))
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXews8ePjQRLxghyatuZy0mOtxZbYHykPoXBqIQGqVA3wKNy_qxmN19VqRBLiW2MhQm3vrZjHycVR9Z9t8_2ZvJa9Rbfm7Al_UQsA4pjVrKLiTgUZAUfUbmU4zmSvhrIAR40F90B6UeMGA9RnuWRLVBsZIg?key=h0K1bMW7BkU587zlvlBCtw)
+# Closeness Centrality
+node_closeness <- closeness(music.network)
+cat("Node Closeness Centrality:\n")
+print(summary(node_closeness))
 
-community:
+# Eigenvector Centrality
+node_eigenvector <- evcent(music.network)$vector
+cat("Node Eigenvector Centrality:\n")
+print(summary(node_eigenvector))
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXfSGWgOKeaOI7qzHNWdOtkWYLIQZ4JtEsP8aYBWKj8QTc_O7OBCZrTyH2YhF6jpB9dGDcMti69W7j3GU6DSjx5vZspl-PFcjMGqaJa63hSUJI5dLLEPCpU0KlTBV4aVUk2IAxPM5BzO88zHPv8UAWvJz6Mu?key=h0K1bMW7BkU587zlvlBCtw)
+# Edge Metrics
+# Edge Betweenness
+edge_betweenness <- edge.betweenness(music.network)
+cat("Edge Betweenness:\n")
+print(summary(edge_betweenness))
+```
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXcM4F-P3aqadZ_ArGZ6wn-qiPnpa2LNbVyOSg_D_-cXuKpcdJOXuly3dgOtkiSSv5T6pmuShK6e_sZudHn-KXNWV-p-LCc2Zbefe4Ni7NzjDEGGa6omwCrIcetHG0bKc4TYiN0oEJ_NIKtXWd3NsKwnEO8?key=h0K1bMW7BkU587zlvlBCtw)
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc5KH2emgCn935pzQkszXzOoU3oUafAKtMYfZRPVK5_eU8tIDrerK8tpE-jmHF3QVTSx_sqDt82KE9mGusfin3_3ir3TMiATzO7597vEfoQgDe-jNVJYR_kG0FBdqzbrJ69pePaNMb--yQiUUSqnOjhLP3l?key=h0K1bMW7BkU587zlvlBCtw)
+**Book**
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXeXLvMfzqVvQWRQFZjEvRlQAfGNjbGmrUf5j0TLb_-UdjgZ9xLaeOF8EByD4V11ij6cafa86izszHeDikZKn-s1HCpNtcuXjrYEHFAjPau47I1sh8Q45UkHYKPDYmPqA9VtS-izLcS-BQijJGPotkj_Y9Id?key=h0K1bMW7BkU587zlvlBCtw)
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc5KH2emgCn935pzQkszXzOoU3oUafAKtMYfZRPVK5_eU8tIDrerK8tpE-jmHF3QVTSx_sqDt82KE9mGusfin3_3ir3TMiATzO7597vEfoQgDe-jNVJYR_kG0FBdqzbrJ69pePaNMb--yQiUUSqnOjhLP3l?key=h0K1bMW7BkU587zlvlBCtw)
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+set.seed(194)
+random.book <- sample(V(amz)[V(amz)$group == 'Book'], 1)
+book.nodes <- retrieve_connected_nodes(amz, random.book)
+book.network <- induced_subgraph(amz, book.nodes)
+# Density
+network_density <- edge_density(book.network)
+cat("Network Density:", network_density, "\n")
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXfnErLL-IcASsJpoYb6MeCbcXbiiopqCQsPeA8VpvZ7NI1kpnc6RKhepDGJpy4VIIwHASkPmuPY_W4N2hNF_nPd7ZaU7iKxeyAENw-g0I2fVN8sh5FcxYe0I3wmtXvy88FJ6qlIUCduA9tLqO0Mra_wue7g?key=h0K1bMW7BkU587zlvlBCtw)
+# Average Path Length
+avg_path_length <- average.path.length(book.network, directed = FALSE)
+cat("Average Path Length:", avg_path_length, "\n")
 
-![](https://lh7-us.googleusercontent.com/docsz/AD_4nXeIBaVzL2ksTIAaYHYMeJNf3_M28rqhfEUEDMRfQaiMXscISFk99ABskS4WYWgXt7gcQp7Cz5aAwLuxb8qvsTyye_x4YpPUojb-kA2gyMGP49jmxHfoHQwD-5DvDaM0kn4tG7FP60MwEO3kexSiZbRt0h06?key=h0K1bMW7BkU587zlvlBCtw)
+# Diameter
+network_diameter <- diameter(book.network, directed = FALSE)
+cat("Network Diameter:", network_diameter, "\n")
+
+# Node Metrics
+# Degree
+node_degree <- degree(book.network)
+cat("Node Degree:\n")
+print(summary(node_degree))
+
+# Betweenness Centrality
+node_betweenness <- betweenness(book.network)
+cat("Node Betweenness Centrality:\n")
+print(summary(node_betweenness))
+
+# Closeness Centrality
+node_closeness <- closeness(book.network)
+cat("Node Closeness Centrality:\n")
+print(summary(node_closeness))
+
+# Eigenvector Centrality
+node_eigenvector <- evcent(book.network)$vector
+cat("Node Eigenvector Centrality:\n")
+print(summary(node_eigenvector))
+
+# Edge Metrics
+# Edge Betweenness
+edge_betweenness <- edge.betweenness(book.network)
+cat("Edge Betweenness:\n")
+print(summary(edge_betweenness))
+```
+
+
+**Video**
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+set.seed(194)
+random.video <- sample(V(amz)[V(amz)$group == 'Video'], 1)
+video.nodes <- retrieve_connected_nodes(amz, random.video)
+video.network <- induced_subgraph(amz, video.nodes)
+# Density
+network_density <- edge_density(video.network)
+cat("Network Density:", network_density, "\n")
+
+# Average Path Length
+avg_path_length <- average.path.length(video.network, directed = FALSE)
+cat("Average Path Length:", avg_path_length, "\n")
+
+# Diameter
+network_diameter <- diameter(video.network, directed = FALSE)
+cat("Network Diameter:", network_diameter, "\n")
+
+# Node Metrics
+# Degree
+node_degree <- degree(video.network)
+cat("Node Degree:\n")
+print(summary(node_degree))
+
+# Betweenness Centrality
+node_betweenness <- betweenness(video.network)
+cat("Node Betweenness Centrality:\n")
+print(summary(node_betweenness))
+
+# Closeness Centrality
+node_closeness <- closeness(video.network)
+cat("Node Closeness Centrality:\n")
+print(summary(node_closeness))
+
+# Eigenvector Centrality
+node_eigenvector <- evcent(video.network)$vector
+cat("Node Eigenvector Centrality:\n")
+print(summary(node_eigenvector))
+
+# Edge Metrics
+# Edge Betweenness
+edge_betweenness <- edge.betweenness(video.network)
+cat("Edge Betweenness:\n")
+print(summary(edge_betweenness))
+```
+
+**DVD**
+
+```{r, echo=FALSE, warning=FALSE, message=FALSE}
+set.seed(194)
+random.dvd <- sample(V(amz)[V(amz)$group == 'DVD'], 1)
+dvd.nodes <- retrieve_connected_nodes(amz, random.dvd)
+dvd.network <- induced_subgraph(amz, dvd.nodes)
+# Density
+network_density <- edge_density(dvd.network)
+cat("Network Density:", network_density, "\n")
+
+# Average Path Length
+avg_path_length <- average.path.length(dvd.network, directed = FALSE)
+cat("Average Path Length:", avg_path_length, "\n")
+
+# Diameter
+network_diameter <- diameter(dvd.network, directed = FALSE)
+cat("Network Diameter:", network_diameter, "\n")
+
+# Node Metrics
+# Degree
+node_degree <- degree(dvd.network)
+cat("Node Degree:\n")
+print(summary(node_degree))
+
+# Betweenness Centrality
+node_betweenness <- betweenness(dvd.network)
+cat("Node Betweenness Centrality:\n")
+print(summary(node_betweenness))
+
+# Closeness Centrality
+node_closeness <- closeness(dvd.network)
+cat("Node Closeness Centrality:\n")
+print(summary(node_closeness))
+
+# Eigenvector Centrality
+node_eigenvector <- evcent(dvd.network)$vector
+cat("Node Eigenvector Centrality:\n")
+print(summary(node_eigenvector))
+
+# Edge Metrics
+# Edge Betweenness
+edge_betweenness <- edge.betweenness(dvd.network)
+cat("Edge Betweenness:\n")
+print(summary(edge_betweenness))
+
+```
+
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -382,10 +538,10 @@ ordered_adjacency_matrix <- t(as.matrix(get.adjacency(undirected_music_network))
 image(1:nrow((ordered_adjacency_matrix)), 1:ncol(ordered_adjacency_matrix), ordered_adjacency_matrix, col=c("white", "black"), main="Reordered Adjacency Matrix for Music Network(Fastgreedy)", axes=FALSE, )
 axis(1, at=1:nrow(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
 axis(2, at=1:ncol(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
-
 ```
 
--   Code
+
+* Code
 
 ```{r, eval = FALSE}
 # Loading Library
