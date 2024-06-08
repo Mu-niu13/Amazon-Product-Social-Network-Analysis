@@ -5,94 +5,77 @@ date: "2024-06-06"
 output: pdf_document
 ---
 
-
 ## Introduction
 
+In this project, we conduct a comprehensive social network analysis on a dataset derived from Amazon's product co-purchasing records. The raw edge data, which was collected on June 1, 2003, from the Amazon website, includes 403,394 nodes representing individual products and 3,387,388 unweighted directed edges indicating frequently co-purchased product pairs. The direction of an edge signifies the order of purchase, with an outward edge from product A to product B indicating that product B is frequently purchased after product A. This dataset is available at [**Amazon Product Co-Purchasing Network**](https://snap.stanford.edu/data/amazon0601.html)**.**
 
-In this project, we conduct a comprehensive social network analysis on a dataset derived from Amazon's product co-purchasing records. The raw edge data, which was collected on June 1, 2003, from the Amazon website, includes 403,394 nodes representing individual products and 3,387,388 unweighted directed edges indicating frequently co-purchased product pairs. The direction of an edge signifies the order of purchase, with an outward edge from product A to product B indicating that product B is frequently purchased after product A. This dataset is available at **[Amazon Product Co-Purchasing Network](https://snap.stanford.edu/data/amazon0601.html).**
-
-
-Additionally, the raw nodes data was collected by crawling Amazon's website and encompasses metadata and review information for 548,552 different products, including books, music, DVDs, and video tapes. This dataset provides detailed information such as the product title, sales rank, list of similar products, detailed product categorization, and reviews. This data was collected in the summer of 2006, and it can be accessed at **[Amazon Product Metadata](https://snap.stanford.edu/data/amazon-meta.html).**
-
+Additionally, the raw nodes data was collected by crawling Amazon's website and encompasses metadata and review information for 548,552 different products, including books, music, DVDs, and video tapes. This dataset provides detailed information such as the product title, sales rank, list of similar products, detailed product categorization, and reviews. This data was collected in the summer of 2006, and it can be accessed at [**Amazon Product Metadata**](https://snap.stanford.edu/data/amazon-meta.html)**.**
 
 After a thorough data cleaning process, we integrated the edge data and node information data, resulting in an igraph object containing 398,688 nodes. Each node has four attributes: ID (unique product ID), Title (product name), Group (class the product belongs to), and Category (subcategory of the class).
 
-
-
 The primary objectives of this analysis are to understand the relationships between products, identify co-purchasing patterns and customer shopping behaviors through network data visualization, and explore various network, node, and edge metrics. We aim to interpret these metrics within the network context, apply community detection algorithms, and analyze the resulting communities. Additionally, we will examine the network's adjacency matrix, reorder vertices to highlight patterns, and observe changes in the matrix to identify clearer patterns based on community or connected components.
-
-
-
 
 ## Methodology
 
 In this project, we followed a structured approach to process the data, analyze the network, and visualize the results.The data processing procedures began with mapping the nodes information dataset, which was a text file with issues of missing data and inconsistent formats, into a dataframe with four columns: ID, Title, Group, and Category. Subsequently, we filtered out all edges in the edge dataset that connected nodes with missing IDs, product titles, or product groups. This ensured that only valid and complete data was included in the analysis. The mapped nodes information data and filtered edge data was then integrated into an igraph object containing 398,688 nodes with four vertex attributes: ID, Title, Group, and Category. The data cleaning process employed packages such as `dplyr` for data manipulation and `igraph` for constructing and managing the igraph object in R.
 
-
-
 For sampling methodology, we generated 4 induced subgraphs by using a node-centric approach. For each sub-network, we randomly selected one node as the starting point and retrieved all nodes connected to it. We then iteratively expanded our sample by including nodes connected to the current set of nodes, continuing this process until the specified number of nodes was reached. This sampling method was designed to capture densely connected nodes, facilitating better visualization and understanding of the relationships between products.
-
-
 
 This comprehensive methodology enabled us to effectively analyze and interpret the Amazon product co-purchasing network, uncovering valuable insights into customer shopping behaviors and product relationships.
 
-
-
-
 ## Analysis
-
 
 After sampling four sub-networks, each formed by using our previously described sampling method and starting with nodes from the book, music, video, and DVD groups respectively, we visualized the subgraphs. This visualization was performed using the base plot and Plotly package in R to generate both static and interactive plots.
 
-
 The visualizations revealed several interesting patterns in co-purchasing behavior. For instance, we observed that individuals who purchase education books also tend to listen to R&B, rap, and hip-hop music. This correlation might suggest a demographic overlap between students or educators and fans of these music genres. Additionally, we found that people who buy nonfiction books also favor history books, which is logical as both are grounded in factual content. Travel book enthusiasts were also seen to purchase audiobooks, likely due to the convenience of not carrying physical copies while traveling. Similarly, customers who buy children's books often buy audiobooks, possibly because audiobooks provide a convenient way for babysitters to engage children. In the DVD group, those who enjoy comedy DVDs also show a diverse taste in music, purchasing DJ music, pop, rock, and metal. An intriguing finding was that several memoir nodes were linked to R&B and DJ music, which might suggest that people prefer listening to these genres while reading memoirs. Additionally, we found that individuals interested in business and investment books also showed an interest in books on arts and photography.
 
+These visualizations enhanced our understanding of the relationships between products and allowed us to identify distinct co-purchasing patterns. The interactive plots, containing more detailed information, can be accessed [**here**](https://amazon-product-sna-visualization.netlify.app/)**.** By analyzing these subgraphs, we gained valuable insights into customer behavior and product affinities, which can be leveraged for better marketing strategies and product recommendations.
 
-These visualizations enhanced our understanding of the relationships between products and allowed us to identify distinct co-purchasing patterns. The interactive plots, containing more detailed information, can be accessed **[here](https://amazon-product-sna-visualization.netlify.app/).** By analyzing these subgraphs, we gained valuable insights into customer behavior and product affinities, which can be leveraged for better marketing strategies and product recommendations.
+
+### Adjacency Matrix&Reordering Nodes
+
+An adjacency matrix is an essential tool for visualizing and analyzing relationships in social networks. Due to report length constraints, I will first examine the original and reordered matrices of the combined network, which integrates four distinct networks. Then, focusing on the music network as a representative.
+
+Firstly, we began by examining the combined adjacency matrix for four distinct product categories: Music, Book, Video, and DVD. Each cell in the matrix represents a co-purchase relationship between products, with grey cells indicating connections. The matrices showed dense intra-network connections and minimal inter-network interactions, highlighting the stability and strong internal community structures within each category. 
+
+For a deeper analysis, we focused on the music network, where we explored its adjacency matrix and employed community detection algorithms such as Walktrap, Infomap, and FastGreedy. These algorithms allowed us to reorder the network, revealing clusters centered around influential nodes like 332118--"Movimiento Music," 251117--"G.I. Blues," and 240889--"De La Soul Is Dead." The consistent appearance of these clusters across different algorithms underscores the network's inherent robustness and stable structure.
+
+Notably, Walktrap and Infomap effectively identified smaller, tightly-knit communities, reflecting specific co-purchasing behaviors. In contrast, FastGreedy captured broader community structures but with less distinct separations. This suggests that while the algorithms detect similar clusters, their mechanisms define these clusters with varying sharpness. Additionally, community detection algorithms seem to aggregate broader communities, which may merge smaller, distinct clusters into larger ones. This can reduce the apparent number of clusters which we see in the original matrix.
 
 
+Our findings demonstrate how product recommendations and purchases propagate within the network, forming cohesive communities around frequently co-purchased items. This aligns with principles from viral marketing, where understanding these dynamics is crucial for predicting future purchases and optimizing marketing strategies. The observed patterns and clusters provide valuable insights into consumer behavior and the interconnectedness of products within the network, emphasizing the importance of community dynamics in network analysis. Given the consistency of these findings, the detailed analysis of the other networks can be inferred to show similar dynamics, justifying a focus on the music network for this study.
 
 ## Results
-
-
 
 ## Conclusion
 
 We analyzed the Amazon music product co-purchasing network to understand its structure and dynamics. Initially, we looked at the basic characteristics of the network, which showed moderate density with significant co-purchasing connections among music products. This setup allows us to see clear patterns and clusters, indicating that while many products are connected, they're not all directly linked.
 
-
 Our study used community detection algorithms like Walktrap, Infomap, and FastGreedy to identify community structures within the network. Walktrap and Infomap were particularly good at finding smaller, closely-knit groups, showing specific buying behaviors among certain products. On the other hand, FastGreedy helped us see larger community structures, providing a broader view of how the network is organized.
-
 
 We also used visualizations like reordered adjacency matrices to illustrate the network's dense connections and the formation of communities around frequently bought items. These visual tools confirmed that our community detection methods were effective and that the network structure was both robust and stable.
 
-
 Our analysis of the Amazon music product co-purchasing network provides valuable insights for enhancing marketing strategies. We identified clusters and key products that illustrate how recommendations and purchases propagate through the network. This information is crucial for targeting marketing efforts effectively and optimizing product recommendations. The study underscores the importance of understanding community dynamics within these networks, offering essential guidance for developing targeted marketing approaches and improving recommendation systems in e-commerce and marketing.
-
 
 ## References
 
-
 ### Dataset:
-- **[Amazon Product Co-Purchasing Network](https://snap.stanford.edu/data/amazon0601.html):** The edge dataset representing products and their co-purchasing patterns on Amazon.
 
-- **[Amazon Product Metadata](https://snap.stanford.edu/data/amazon-meta.html):** Metadata for products listed in the Amazon Product Co-Purchasing Network.
+-   [**Amazon Product Co-Purchasing Network**](https://snap.stanford.edu/data/amazon0601.html)**:** The edge dataset representing products and their co-purchasing patterns on Amazon.
 
+-   [**Amazon Product Metadata**](https://snap.stanford.edu/data/amazon-meta.html)**:** Metadata for products listed in the Amazon Product Co-Purchasing Network.
 
 ### Academic Reference:
-- J. Leskovec, L. Adamic, and B. Adamic. [The Dynamics of Viral Marketing](https://doi.org/10.1145/1232722.1232727). ACM Transactions on the Web (ACM TWEB), 1(1), 2007.
 
+-   J. Leskovec, L. Adamic, and B. Adamic. [The Dynamics of Viral Marketing](https://doi.org/10.1145/1232722.1232727). ACM Transactions on the Web (ACM TWEB), 1(1), 2007.
 
 ### Acknowledgments:
+
 We extend our heartfelt thanks to Isaiah Katz and Dr. Uma Ravat. Their assistance was invaluable, and we couldn't have completed this project without their support.
-
-
 
 ## Appendices
 
-
-* Figures
-
+-   Figures
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 # library
@@ -197,10 +180,160 @@ plot_product_community("Video", "Video Products Community")
 plot_product_community("DVD", "DVD Products Community")
 ```
 
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
+
+# preparsion
+library(Matrix)
+
+set.seed(194)
+
+# randomly select 1 node from music group
+music.random = sample(V(amz)[V(amz)$group == "Music"], 1)
+
+# apply function to get 200 related nodes
+music.nodes = retrieve_connected_nodes(amz, music.random)
+music.network <- induced_subgraph(amz, music.nodes)
+
+# randomly select 1 node from book group
+book.random = sample(V(amz)[V(amz)$group == "Book"], 1)
+
+# apply function to get 200 related nodes
+book.nodes = retrieve_connected_nodes(amz, book.random)
+
+book.network <- induced_subgraph(amz, book.nodes)
 
 
-* Code
+# randomly select 1 node from video group
+video.random = sample(V(amz)[V(amz)$group == "Video"], 1)
 
+# apply function to get 200 related nodes
+video.nodes = retrieve_connected_nodes(amz, video.random)
+
+video.network <- induced_subgraph(amz, video.nodes)
+
+# randomly select 1 node from music group
+dvd.random = sample(V(amz)[V(amz)$group == "DVD"], 1)
+
+# apply function to get 200 related nodes
+dvd.nodes = retrieve_connected_nodes(amz, dvd.random)
+
+dvd.network <- induced_subgraph(amz, dvd.nodes)
+
+# matrix for combined network
+a <- union(music.network,book.network,video.network,dvd.network)
+edges_list_F <- as_edgelist(a, names = TRUE)
+
+
+igraph_network_F <- graph.edgelist(edges_list_F, directed = TRUE)
+
+network.adjacency_F <- as_adj(igraph_network_F)
+
+image(Matrix(network.adjacency_F))
+
+# reordered version
+
+com <- cluster_walktrap(a)
+plot(com, a, main="Walktrap Algorithm", vertex.size=10, edge.arrow.size=0.05, vertex.label.cex=0.7, vertex.label.color="black")
+
+# Get the membership vector
+mem <- membership(com)
+
+# List the members of each community
+community_list <- split(V(a)$name, mem)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(mem)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(a))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
+
+# music matrix original
+adj_matrix <- as_adjacency_matrix(music.network, sparse = FALSE)
+
+# Transpose the adjacency matrix to swap rows and columns
+adj_matrix_transposed <- t(adj_matrix)
+
+# Set up the plot with customizations
+par(mar = c(5, 5, 4, 2) + 0.1)  # Increase margins for axis labels
+
+# Visualize the transposed adjacency matrix with gridlines and node labels
+image(1:nrow(adj_matrix_transposed), 1:ncol(adj_matrix_transposed), adj_matrix_transposed, 
+      main = "Adjacency Matrix For Music", 
+      xlab = "Nodes", ylab = "Nodes", 
+      axes = FALSE, col = c("white", "black"))
+
+# Add gridlines
+grid(nx = nrow(adj_matrix_transposed), ny = ncol(adj_matrix_transposed), col = "gray", lty = "dotted")
+
+# Add axis labels with the correct node names
+axis(1, at = 1:nrow(adj_matrix_transposed), labels = rownames(adj_matrix_transposed), las = 2, cex.axis = 0.7, tick = FALSE)
+axis(2, at = 1:ncol(adj_matrix_transposed), labels = colnames(adj_matrix_transposed), las = 2, cex.axis = 0.7, tick = FALSE)
+
+# music optimal
+
+music.cluster <- cluster_optimal(music.network)
+modularity_value <- modularity(music.cluster)
+modularity_value
+
+membership <- membership(music.cluster)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(music.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(t(ordered_adjacency_matrix), main="Reordered Adjacency Matrix for Music Network(Optimal)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+
+# music walktrap
+# Detect communities
+communities <- cluster_walktrap(music.network)
+
+# Get the membership vector
+membership <- membership(communities)
+
+# List the members of each community
+community_list <- split(V(music.network)$name, membership)
+
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- as.matrix(get.adjacency(music.network))[ordered_indices, ordered_indices]
+
+# Plot the reordered adjacency matrix
+image(t(ordered_adjacency_matrix), main="Reordered Adjacency Matrix for Music Network(Walktrap)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(music.network)$name[ordered_indices], las=2, cex.axis=0.7)
+
+# music fastgreedy
+# change the network to undirected
+undirected_music_network <- as.undirected(music.network, mode="collapse")
+
+# Detect communities using the walktrap algorithm
+communities <- cluster_fast_greedy(undirected_music_network)
+
+membership <- membership(communities)
+
+# List the members of each community
+community_list <- split(V(undirected_music_network)$name, membership)
+
+
+
+# Reorder nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- t(as.matrix(get.adjacency(undirected_music_network))[ordered_indices, ordered_indices])
+
+# Plot reordered adjacency matrix with community colors
+image(1:nrow((ordered_adjacency_matrix)), 1:ncol(ordered_adjacency_matrix), ordered_adjacency_matrix, col=c("white", "black"), main="Reordered Adjacency Matrix for Music Network(Fastgreedy)", axes=FALSE, )
+axis(1, at=1:nrow(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
+axis(2, at=1:ncol(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
+```
+
+
+-   Code
 
 ```{r, eval = FALSE}
 # Loading Library
@@ -1203,11 +1336,3 @@ image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix", xlab="Nodes",
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(a)$name[ordered_indices], las=2, cex.axis=0.7)
 ```
-
-
-
-
-
-
-
-

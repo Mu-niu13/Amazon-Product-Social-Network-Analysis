@@ -157,6 +157,21 @@ The study of co-purchase networks provides valuable insights into customer purch
 
 ![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc0cirA6bxIPKbRBjoY2hbl5J73YZoEf9rlqpuJhvP1FjEM8e722ixP4MbDrIHwkI1zuP3tfpy9saR8kU_204hsusP3ynAG6qVPTUYvib3uO-c_pnIP1Vv3zcMMp5y6_P0Wurs2plwi0_mQMlHIbIh-UmGN?key=h0K1bMW7BkU587zlvlBCtw)
 
+### Adjacency Matrix&Reordering Nodes
+
+An adjacency matrix is an essential tool for visualizing and analyzing relationships in social networks. Due to report length constraints, I will first examine the original and reordered matrices of the combined network, which integrates four distinct networks. Then, focusing on the music network as a representative.
+
+Firstly, we began by examining the combined adjacency matrix for four distinct product categories: Music, Book, Video, and DVD. Each cell in the matrix represents a co-purchase relationship between products, with grey cells indicating connections. The matrices showed dense intra-network connections and minimal inter-network interactions, highlighting the stability and strong internal community structures within each category. 
+
+For a deeper analysis, we focused on the music network, where we explored its adjacency matrix and employed community detection algorithms such as Walktrap, Infomap, and FastGreedy. These algorithms allowed us to reorder the network, revealing clusters centered around influential nodes like 332118--"Movimiento Music," 251117--"G.I. Blues," and 240889--"De La Soul Is Dead." The consistent appearance of these clusters across different algorithms underscores the network's inherent robustness and stable structure.
+
+Notably, Walktrap and Infomap effectively identified smaller, tightly-knit communities, reflecting specific co-purchasing behaviors. In contrast, FastGreedy captured broader community structures but with less distinct separations. This suggests that while the algorithms detect similar clusters, their mechanisms define these clusters with varying sharpness. Additionally, community detection algorithms seem to aggregate broader communities, which may merge smaller, distinct clusters into larger ones. This can reduce the apparent number of clusters which we see in the original matrix.
+
+
+Our findings demonstrate how product recommendations and purchases propagate within the network, forming cohesive communities around frequently co-purchased items. This aligns with principles from viral marketing, where understanding these dynamics is crucial for predicting future purchases and optimizing marketing strategies. The observed patterns and clusters provide valuable insights into consumer behavior and the interconnectedness of products within the network, emphasizing the importance of community dynamics in network analysis. Given the consistency of these findings, the detailed analysis of the other networks can be inferred to show similar dynamics, justifying a focus on the music network for this study.
+
+
+
 ## Results
 
 ## Conclusion

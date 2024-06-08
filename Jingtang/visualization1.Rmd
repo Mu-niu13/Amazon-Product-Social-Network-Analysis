@@ -1099,17 +1099,8 @@ communities <- cluster_walktrap(music.network)
 # Get the membership vector
 membership <- membership(communities)
 
-# Calculate modularity to quantify the strength of the detected communities
-modularity_value <- modularity(communities)
-print(paste("Modularity:", modularity_value))
-
-# Identify the number of communities
-num_communities <- length(unique(membership))
-print(paste("Number of Communities:", num_communities))
-
 # List the members of each community
 community_list <- split(V(music.network)$name, membership)
-community_list
 
 # Reorder the nodes based on community membership
 ordered_indices <- order(membership)
@@ -1582,7 +1573,6 @@ mem <- membership(com)
 
 # List the members of each community
 community_list <- split(V(a)$name, mem)
-community_list
 
 # Reorder the nodes based on community membership
 ordered_indices <- order(mem)
