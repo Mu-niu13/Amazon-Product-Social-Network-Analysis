@@ -31,31 +31,45 @@ The visualizations revealed several interesting patterns in co-purchasing behavi
 
 These visualizations enhanced our understanding of the relationships between products and allowed us to identify distinct co-purchasing patterns. The interactive plots, containing more detailed information, can be accessed [**here**](https://amazon-product-sna-visualization.netlify.app/)**.** By analyzing these subgraphs, we gained valuable insights into customer behavior and product affinities, which can be leveraged for better marketing strategies and product recommendations.
 
+### Metrics and Community Detection
+
+### Condensed Summary:
+
+The study of co-purchase networks offers significant insights into customer behavior, product relationships, and marketing strategies. This analysis focuses on the co-purchase networks of Music, Book, Video, and DVD categories. Each category's network structure is examined through its adjacency matrix and various metrics to understand the connectivity and influential nodes.
+
+In the Music network, a density of 0.237 indicates moderate connectivity with frequent co-purchases. Key metrics such as average path length, degree distribution, and centrality measures (betweenness, closeness, and eigenvector) reveal a balanced network with some influential hubs and strong co-purchase relationships.
+
+The Book network shows lower density (0.137), reflecting a more dispersed structure with significant but less frequent connections. Its metrics indicate moderate connectivity and a few key nodes maintaining network cohesion.
+
+For the Video network, a density of 0.189 suggests moderate connectivity with a compact structure, characterized by average path lengths and strong, though moderately distributed, influential nodes.
+
+Community detection through algorithms like Walktrap, Infomap, and FastGreedy offer deeper insights into each network’s community dynamics. The Walktrap algorithm, which uses random walks, and Infomap, focusing on information flow compression, both identify smaller, tighter communities. FastGreedy, through hierarchical merging, captures broader community structures with slightly less sharp boundaries.
+
+Each algorithm highlights how products are grouped and connected within the network, with Walktrap and Infomap providing more detailed, smaller communities and FastGreedy offering a broader view. The stability of community structures across different networks and algorithms underscores the robustness of the network's configuration, showing that recommendations and co-purchases propagate through stable, well-defined clusters.
+
+Overall, these analyses not only map out the internal dynamics of product co-purchase networks but also provide actionable insights for optimizing product recommendations and marketing strategies.
 
 ### Adjacency Matrix&Reordering Nodes
 
 An adjacency matrix is an essential tool for visualizing and analyzing relationships in social networks. Due to report length constraints, I will first examine the original and reordered matrices of the combined network, which integrates four distinct networks. Then, focusing on the music network as a representative.
 
-Firstly, we began by examining the combined adjacency matrix for four distinct product categories: Music, Book, Video, and DVD. Each cell in the matrix represents a co-purchase relationship between products, with grey cells indicating connections. The matrices showed dense intra-network connections and minimal inter-network interactions, highlighting the stability and strong internal community structures within each category. 
+Firstly, we began by examining the combined adjacency matrix for four distinct product categories: Music, Book, Video, and DVD. Each cell in the matrix represents a co-purchase relationship between products, with grey cells indicating connections. The matrices showed dense intra-network connections and minimal inter-network interactions, highlighting the stability and strong internal community structures within each category.
 
 For a deeper analysis, we focused on the music network, where we explored its adjacency matrix and employed community detection algorithms such as Walktrap, Infomap, and FastGreedy. These algorithms allowed us to reorder the network, revealing clusters centered around influential nodes like 332118--"Movimiento Music," 251117--"G.I. Blues," and 240889--"De La Soul Is Dead." The consistent appearance of these clusters across different algorithms underscores the network's inherent robustness and stable structure.
 
 Notably, Walktrap and Infomap effectively identified smaller, tightly-knit communities, reflecting specific co-purchasing behaviors. In contrast, FastGreedy captured broader community structures but with less distinct separations. This suggests that while the algorithms detect similar clusters, their mechanisms define these clusters with varying sharpness. Additionally, community detection algorithms seem to aggregate broader communities, which may merge smaller, distinct clusters into larger ones. This can reduce the apparent number of clusters which we see in the original matrix.
 
-
 Our findings demonstrate how product recommendations and purchases propagate within the network, forming cohesive communities around frequently co-purchased items. This aligns with principles from viral marketing, where understanding these dynamics is crucial for predicting future purchases and optimizing marketing strategies. The observed patterns and clusters provide valuable insights into consumer behavior and the interconnectedness of products within the network, emphasizing the importance of community dynamics in network analysis. Given the consistency of these findings, the detailed analysis of the other networks can be inferred to show similar dynamics, justifying a focus on the music network for this study.
-
-## Results
 
 ## Conclusion
 
-We analyzed the Amazon music product co-purchasing network to understand its structure and dynamics. Initially, we looked at the basic characteristics of the network, which showed moderate density with significant co-purchasing connections among music products. This setup allows us to see clear patterns and clusters, indicating that while many products are connected, they're not all directly linked.
+We analyzed the Amazon product co-purchasing network to understand its structure and dynamics. Initially, we looked at the basic characteristics of the network, which showed moderate density with significant co-purchasing connections among music products. This setup allows us to see clear patterns and clusters, indicating that while many products are connected, they're not all directly linked.
 
 Our study used community detection algorithms like Walktrap, Infomap, and FastGreedy to identify community structures within the network. Walktrap and Infomap were particularly good at finding smaller, closely-knit groups, showing specific buying behaviors among certain products. On the other hand, FastGreedy helped us see larger community structures, providing a broader view of how the network is organized.
 
 We also used visualizations like reordered adjacency matrices to illustrate the network's dense connections and the formation of communities around frequently bought items. These visual tools confirmed that our community detection methods were effective and that the network structure was both robust and stable.
 
-Our analysis of the Amazon music product co-purchasing network provides valuable insights for enhancing marketing strategies. We identified clusters and key products that illustrate how recommendations and purchases propagate through the network. This information is crucial for targeting marketing efforts effectively and optimizing product recommendations. The study underscores the importance of understanding community dynamics within these networks, offering essential guidance for developing targeted marketing approaches and improving recommendation systems in e-commerce and marketing.
+Our analysis of the Amazon product co-purchasing network provides valuable insights for enhancing marketing strategies. We identified clusters and key products that illustrate how recommendations and purchases propagate through the network. This information is crucial for targeting marketing efforts effectively and optimizing product recommendations. The study underscores the importance of understanding community dynamics within these networks, offering essential guidance for developing targeted marketing approaches and improving recommendation systems in e-commerce and marketing.
 
 ## References
 
@@ -68,6 +82,12 @@ Our analysis of the Amazon music product co-purchasing network provides valuable
 ### Academic Reference:
 
 -   J. Leskovec, L. Adamic, and B. Adamic. [The Dynamics of Viral Marketing](https://doi.org/10.1145/1232722.1232727). ACM Transactions on the Web (ACM TWEB), 1(1), 2007.
+
+### Further Elaboration:
+
+<https://docs.google.com/document/d/13haJthH50zWkUDmupgW31NK3xq_aHxab41QQLrzKcTQ/edit>
+
+Since we do not have enough space in this report, further analysis and interpretation can be accessed via this link.
 
 ### Acknowledgments:
 
@@ -179,6 +199,38 @@ plot_product_community("Video", "Video Products Community")
 # DVD group
 plot_product_community("DVD", "DVD Products Community")
 ```
+
+Music
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXesONswct9tFSOH6oOdFKIMoGnyUnGckYCNFPEpcqF9hK6ekUv5Y6_tfuz8mV4EGNWVAwUwY6vciG-jG4MzGxlraVLoT7fW95s7uECSLxbMftMbK7kofPjtsu_DIvnX0RmubGtMRyF8kIjdxzaJrm1IUfI?key=h0K1bMW7BkU587zlvlBCtw)
+
+Book
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc2mQS1hMogVBgcRsimXvnm5HyjKObbh0b6iAImCZSMI3OzB2xZeAGQK8916qcT9q6Pp9_2kwSO1Shr4WwOXxrmLfAQ2TqgFgJG_9u-H3kwhhiglvLuFfRfoZoRPW9lqetuwSd6b32h0StDNaf03tCB5xmu?key=h0K1bMW7BkU587zlvlBCtw)
+
+Video
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc0cirA6bxIPKbRBjoY2hbl5J73YZoEf9rlqpuJhvP1FjEM8e722ixP4MbDrIHwkI1zuP3tfpy9saR8kU_204hsusP3ynAG6qVPTUYvib3uO-c_pnIP1Vv3zcMMp5y6_P0Wurs2plwi0_mQMlHIbIh-UmGN?key=h0K1bMW7BkU587zlvlBCtw)
+
+DVD
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXews8ePjQRLxghyatuZy0mOtxZbYHykPoXBqIQGqVA3wKNy_qxmN19VqRBLiW2MhQm3vrZjHycVR9Z9t8_2ZvJa9Rbfm7Al_UQsA4pjVrKLiTgUZAUfUbmU4zmSvhrIAR40F90B6UeMGA9RnuWRLVBsZIg?key=h0K1bMW7BkU587zlvlBCtw)
+
+community:
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXfSGWgOKeaOI7qzHNWdOtkWYLIQZ4JtEsP8aYBWKj8QTc_O7OBCZrTyH2YhF6jpB9dGDcMti69W7j3GU6DSjx5vZspl-PFcjMGqaJa63hSUJI5dLLEPCpU0KlTBV4aVUk2IAxPM5BzO88zHPv8UAWvJz6Mu?key=h0K1bMW7BkU587zlvlBCtw)
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXcM4F-P3aqadZ_ArGZ6wn-qiPnpa2LNbVyOSg_D_-cXuKpcdJOXuly3dgOtkiSSv5T6pmuShK6e_sZudHn-KXNWV-p-LCc2Zbefe4Ni7NzjDEGGa6omwCrIcetHG0bKc4TYiN0oEJ_NIKtXWd3NsKwnEO8?key=h0K1bMW7BkU587zlvlBCtw)
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc5KH2emgCn935pzQkszXzOoU3oUafAKtMYfZRPVK5_eU8tIDrerK8tpE-jmHF3QVTSx_sqDt82KE9mGusfin3_3ir3TMiATzO7597vEfoQgDe-jNVJYR_kG0FBdqzbrJ69pePaNMb--yQiUUSqnOjhLP3l?key=h0K1bMW7BkU587zlvlBCtw)
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXeXLvMfzqVvQWRQFZjEvRlQAfGNjbGmrUf5j0TLb_-UdjgZ9xLaeOF8EByD4V11ij6cafa86izszHeDikZKn-s1HCpNtcuXjrYEHFAjPau47I1sh8Q45UkHYKPDYmPqA9VtS-izLcS-BQijJGPotkj_Y9Id?key=h0K1bMW7BkU587zlvlBCtw)
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXc5KH2emgCn935pzQkszXzOoU3oUafAKtMYfZRPVK5_eU8tIDrerK8tpE-jmHF3QVTSx_sqDt82KE9mGusfin3_3ir3TMiATzO7597vEfoQgDe-jNVJYR_kG0FBdqzbrJ69pePaNMb--yQiUUSqnOjhLP3l?key=h0K1bMW7BkU587zlvlBCtw)
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXfnErLL-IcASsJpoYb6MeCbcXbiiopqCQsPeA8VpvZ7NI1kpnc6RKhepDGJpy4VIIwHASkPmuPY_W4N2hNF_nPd7ZaU7iKxeyAENw-g0I2fVN8sh5FcxYe0I3wmtXvy88FJ6qlIUCduA9tLqO0Mra_wue7g?key=h0K1bMW7BkU587zlvlBCtw)
+
+![](https://lh7-us.googleusercontent.com/docsz/AD_4nXeIBaVzL2ksTIAaYHYMeJNf3_M28rqhfEUEDMRfQaiMXscISFk99ABskS4WYWgXt7gcQp7Cz5aAwLuxb8qvsTyye_x4YpPUojb-kA2gyMGP49jmxHfoHQwD-5DvDaM0kn4tG7FP60MwEO3kexSiZbRt0h06?key=h0K1bMW7BkU587zlvlBCtw)
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 
@@ -330,8 +382,8 @@ ordered_adjacency_matrix <- t(as.matrix(get.adjacency(undirected_music_network))
 image(1:nrow((ordered_adjacency_matrix)), 1:ncol(ordered_adjacency_matrix), ordered_adjacency_matrix, col=c("white", "black"), main="Reordered Adjacency Matrix for Music Network(Fastgreedy)", axes=FALSE, )
 axis(1, at=1:nrow(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
 axis(2, at=1:ncol(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
-```
 
+```
 
 -   Code
 
