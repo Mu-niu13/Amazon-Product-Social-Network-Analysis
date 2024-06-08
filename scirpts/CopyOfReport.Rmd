@@ -619,11 +619,6 @@ communities <- cluster_fast_greedy(undirected_music_network)
 
 membership <- membership(communities)
 
-# List the members of each community
-community_list <- split(V(undirected_music_network)$name, membership)
-
-
-
 # Reorder nodes based on community membership
 ordered_indices <- order(membership)
 ordered_adjacency_matrix <- t(as.matrix(get.adjacency(undirected_music_network))[ordered_indices, ordered_indices])
@@ -632,6 +627,18 @@ ordered_adjacency_matrix <- t(as.matrix(get.adjacency(undirected_music_network))
 image(1:nrow((ordered_adjacency_matrix)), 1:ncol(ordered_adjacency_matrix), ordered_adjacency_matrix, col=c("white", "black"), main="Reordered Adjacency Matrix for Music Network(Fastgreedy)", axes=FALSE, )
 axis(1, at=1:nrow(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
 axis(2, at=1:ncol(ordered_adjacency_matrix), labels=V(undirected_music_network)$name[ordered_indices], las=2, cex.axis=0.5)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
+
+# List the members of each community
+community_list <- split(V(undirected_music_network)$name, membership)
+community_list
 ```
 
 **Book**
@@ -652,6 +659,15 @@ communities <- cluster_walktrap(book.network)
 # Get the membership vector
 membership <- membership(communities)
 
+# Reorder the nodes based on community membership
+ordered_indices <- order(membership)
+ordered_adjacency_matrix <- t(as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices])
+
+# Plot the reordered adjacency matrix
+image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for Book(walktrap)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
+axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
+
 # Calculate modularity to quantify the strength of the detected communities
 modularity_value <- modularity(communities)
 print(paste("Modularity:", modularity_value))
@@ -663,15 +679,6 @@ print(paste("Number of Communities:", num_communities))
 # List the members of each community
 community_list <- split(V(book.network)$name, membership)
 community_list
-
-# Reorder the nodes based on community membership
-ordered_indices <- order(membership)
-ordered_adjacency_matrix <- t(as.matrix(get.adjacency(book.network))[ordered_indices, ordered_indices])
-
-# Plot the reordered adjacency matrix
-image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for Book(walktrap)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
-axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
-axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(book.network)$name[ordered_indices], las=2, cex.axis=0.7)
 
 ```
 
@@ -696,14 +703,6 @@ communities <- cluster_fast_greedy(undirected_video_network)
 # Get the membership vector
 membership <- membership(communities)
 
-# Calculate modularity to quantify the strength of the detected communities
-modularity_value <- modularity(communities)
-print(paste("Modularity:", modularity_value))
-
-# Identify the number of communities
-num_communities <- length(unique(membership))
-print(paste("Number of Communities:", num_communities))
-
 # Reorder the nodes based on community membership
 ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_video_network))[ordered_indices, ordered_indices]
@@ -712,6 +711,14 @@ ordered_adjacency_matrix <- as.matrix(get.adjacency(undirected_video_network))[o
 image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for Video(Fastgreedy)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_video_network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(undirected_video_network)$name[ordered_indices], las=2, cex.axis=0.7)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
 ```
 
 
@@ -733,14 +740,6 @@ communities <- cluster_walktrap(dvd.network)
 # Get the membership vector
 membership <- membership(communities)
 
-# Calculate modularity to quantify the strength of the detected communities
-modularity_value <- modularity(communities)
-print(paste("Modularity:", modularity_value))
-
-# Identify the number of communities
-num_communities <- length(unique(membership))
-print(paste("Number of Communities:", num_communities))
-
 # Reorder the nodes based on community membership
 ordered_indices <- order(membership)
 ordered_adjacency_matrix <- as.matrix(get.adjacency(dvd.network))[ordered_indices, ordered_indices]
@@ -749,6 +748,14 @@ ordered_adjacency_matrix <- as.matrix(get.adjacency(dvd.network))[ordered_indice
 image(ordered_adjacency_matrix, main="Reordered Adjacency Matrix for DVD(walktrap)", xlab="Nodes", ylab="Nodes", axes=FALSE, col=c("white", "black"))
 axis(1, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
 axis(2, at=seq(0, 1, length.out=length(ordered_indices)), labels=V(dvd.network)$name[ordered_indices], las=2, cex.axis=0.7)
+
+# Calculate modularity to quantify the strength of the detected communities
+modularity_value <- modularity(communities)
+print(paste("Modularity:", modularity_value))
+
+# Identify the number of communities
+num_communities <- length(unique(membership))
+print(paste("Number of Communities:", num_communities))
 ```
 
 * Code
