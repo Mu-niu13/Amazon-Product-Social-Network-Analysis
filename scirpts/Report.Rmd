@@ -33,8 +33,6 @@ These visualizations enhanced our understanding of the relationships between pro
 
 ### Metrics and Community Detection
 
-### Condensed Summary:
-
 The study of co-purchase networks offers significant insights into customer behavior, product relationships, and marketing strategies. This analysis focuses on the co-purchase networks of Music, Book, Video, and DVD categories. Each category's network structure is examined through its adjacency matrix and various metrics to understand the connectivity and influential nodes.
 
 In the Music network, a density of 0.237 indicates moderate connectivity with frequent co-purchases. Key metrics such as average path length, degree distribution, and centrality measures (betweenness, closeness, and eigenvector) reveal a balanced network with some influential hubs and strong co-purchase relationships.

@@ -1,4 +1,4 @@
-This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.7)  7 JUN 2024 23:54
+This is pdfTeX, Version 3.141592653-2.6-1.40.26 (TeX Live 2024) (preloaded format=pdflatex 2024.6.7)  7 JUN 2024 23:57
 entering extended mode
  restricted \write18 enabled.
  %&-line parsing enabled.
@@ -429,20 +429,20 @@ File: t1lmtt.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 [2]
 
 [3]
-LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 353.
+LaTeX Font Info:    Trying to load font information for TS1+lmr on input line 351.
 (/Users/jingtangsun/Library/TinyTeX/texmf-dist/tex/latex/lm/ts1lmr.fd
 File: ts1lmr.fd 2015/05/01 v1.6.1 Font defs for Latin Modern
 )
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <10> on input line 374.
+(Font)              <10> on input line 372.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <7> on input line 374.
+(Font)              <7> on input line 372.
 LaTeX Font Info:    External font `lmex10' loaded for size
-(Font)              <5> on input line 374.
-<Report_files/figure-latex/unnamed-chunk-1-1.pdf, id=37, 469.755pt x 325.215pt>
+(Font)              <5> on input line 372.
+<Report_files/figure-latex/unnamed-chunk-1-1.pdf, id=36, 469.755pt x 325.215pt>
 File: Report_files/figure-latex/unnamed-chunk-1-1.pdf Graphic file (type pdf)
 <use Report_files/figure-latex/unnamed-chunk-1-1.pdf>
-Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-1-1.pdf  used on input line 393.
+Package pdftex.def Info: Report_files/figure-latex/unnamed-chunk-1-1.pdf  used on input line 391.
 (pdftex.def)             Requested size: 469.75386pt x 325.2142pt.
 
 
@@ -454,13 +454,13 @@ See the LaTeX manual or LaTeX Companion for explanation.
 Type  H <return>  for immediate help.
  ...                                              
                                                   
-l.397 ...jdxzaJrm1IUfI?key=h0K1bMW7BkU587zlvlBCtw}
+l.395 ...jdxzaJrm1IUfI?key=h0K1bMW7BkU587zlvlBCtw}
                                                    
 Here is how much of TeX's memory you used:
- 11621 strings out of 475560
- 186621 string characters out of 5776710
+ 11619 strings out of 475560
+ 186604 string characters out of 5776710
  1940891 words of memory out of 5000000
- 34056 multiletter control sequences out of 15000+600000
+ 34055 multiletter control sequences out of 15000+600000
  598804 words of font info for 75 fonts, out of 8000000 for 9000
  14 hyphenation exceptions out of 8191
  89i,6n,93p,509b,438s stack positions out of 10000i,1000n,20000p,200000b,200000s
